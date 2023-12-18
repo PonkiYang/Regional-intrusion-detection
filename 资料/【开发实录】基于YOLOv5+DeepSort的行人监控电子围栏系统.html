@@ -1,0 +1,862 @@
+
+            <html lang="zh-CN">
+            <head> 
+             <meta charset="utf-8">
+      <link rel="canonical" href="https://blog.csdn.net/weixin_44936889/article/details/113129098">
+
+      <meta http-equiv="content-type" content="text/html; charset=utf-8"> 
+      <meta name="renderer" content="webkit"> 
+      <meta name="force-rendering" content="webkit"> 
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
+      <meta name="report" content="{&quot;pid&quot;: &quot;blog&quot;, &quot;spm&quot;:&quot;1001.2101&quot;}">  
+      <meta http-equiv="Cache-Control" content="no-siteapp">
+      <link rel="alternate" media="handheld" href="#"> 
+      <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848"> 
+      <meta name="applicable-device" content="pc"> 
+      <link href="https://g.csdnimg.cn/static/logo/favicon32.ico" rel="shortcut icon" type="image/x-icon">
+
+            <title>(368条消息) 【开发实录】基于YOLOv5+DeepSort的行人监控电子围栏系统_BIT可达鸭的博客-CSDN博客_yolov5电子围栏</title><meta name="keywords" content="yolov5电子围栏"><meta name="description" content="【开发实录】基于YOLOv5+DeepSort的行人监控电子围栏系统1. 项目目标：2. 项目演示：3. YOLOv5目标检测+DeepSort目标追踪：4. UI界面开发：4.1 登录界面：4.2 加载界面：4.3 主界面：4.4 美化界面：5. UI功能开发：5.1 绑定槽函数：5.2 在UI中显示视频：5.3 相应鼠标绘制区域：5.4 其他细节：6. 部署方案：6.1 端侧视频推流：6.2 Flask部署：7. 联系作者：1. 项目目标：本项目目标为开发基于YOLOv5+DeepSort的行人监控">
+
+            <link rel="stylesheet" type="text/css" href="https://csdnimg.cn/release/blogv2/dist/pc/css/detail_enter-98da382783.min.css">  
+      <link rel="stylesheet" type="text/css" href="https://csdnimg.cn/release/blogv2/dist/pc/themesSkin/skin-blackboard/skin-blackboard-3adcc2c475.min.css">     
+      <link rel="stylesheet" type="text/css" href="https://csdnimg.cn/public/sandalstrap/1.4/css/sandalstrap.min.css"> 
+      <style>.MathJax_Display {text-align: center; margin: 1em 0em; position: relative; display: block!important; text-indent: 0; max-width: none; max-height: none; min-width: 0; min-height: 0; width: 100%} .MathJax .merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%} .MathJax .MJX-monospace {font-family: monospace} .MathJax .MJX-sans-serif {font-family: sans-serif} #MathJax_Tooltip {background-color: InfoBackground; color: InfoText; border: 1px solid black; box-shadow: 2px 2px 5px #AAAAAA; -webkit-box-shadow: 2px 2px 5px #AAAAAA; -moz-box-shadow: 2px 2px 5px #AAAAAA; -khtml-box-shadow: 2px 2px 5px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true'); padding: 3px 4px; z-index: 401; position: absolute; left: 0; top: 0; width: auto; height: auto; display: none} .MathJax {display: inline; font-style: normal; font-weight: normal; line-height: normal; font-size: 100%; font-size-adjust: none; text-indent: 0; text-align: left; text-transform: none; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0; min-height: 0; border: 0; padding: 0; margin: 0} .MathJax:focus, body :focus .MathJax {display: inline-table} .MathJax.MathJax_FullWidth {text-align: center; display: table-cell!important; width: 10000em!important} .MathJax img, .MathJax nobr, .MathJax a {border: 0; padding: 0; margin: 0; max-width: none; max-height: none; min-width: 0; min-height: 0; vertical-align: 0; line-height: normal; text-decoration: none} img.MathJax_strut {border: 0!important; padding: 0!important; margin: 0!important; vertical-align: 0!important} .MathJax span {display: inline; position: static; border: 0; padding: 0; margin: 0; vertical-align: 0; line-height: normal; text-decoration: none} .MathJax nobr {white-space: nowrap!important} .MathJax img {display: inline!important; float: none!important} .MathJax * {transition: none; -webkit-transition: none; -moz-transition: none; -ms-transition: none; -o-transition: none} .MathJax_Processing {visibility: hidden; position: fixed; width: 0; height: 0; overflow: hidden} .MathJax_Processed {display: none!important} .MathJax_ExBox {display: block!important; overflow: hidden; width: 1px; height: 60ex; min-height: 0; max-height: none} .MathJax .MathJax_EmBox {display: block!important; overflow: hidden; width: 1px; height: 60em; min-height: 0; max-height: none} .MathJax_LineBox {display: table!important} .MathJax_LineBox span {display: table-cell!important; width: 10000em!important; min-width: 0; max-width: none; padding: 0; border: 0; margin: 0} .MathJax .MathJax_HitBox {cursor: text; background: white; opacity: 0; filter: alpha(opacity=0)} .MathJax .MathJax_HitBox * {filter: none; opacity: 1; background: transparent} #MathJax_Tooltip * {filter: none; opacity: 1; background: transparent} @font-face {font-family: MathJax_Main; src: url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Main-Regular.woff?V=2.7.2') format('woff'), url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/otf/MathJax_Main-Regular.otf?V=2.7.2') format('opentype')} @font-face {font-family: MathJax_Main-bold; src: url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Main-Bold.woff?V=2.7.2') format('woff'), url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/otf/MathJax_Main-Bold.otf?V=2.7.2') format('opentype')} @font-face {font-family: MathJax_Main-italic; src: url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Main-Italic.woff?V=2.7.2') format('woff'), url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/otf/MathJax_Main-Italic.otf?V=2.7.2') format('opentype')} @font-face {font-family: MathJax_Math-italic; src: url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Math-Italic.woff?V=2.7.2') format('woff'), url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/otf/MathJax_Math-Italic.otf?V=2.7.2') format('opentype')} @font-face {font-family: MathJax_Caligraphic; src: url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Caligraphic-Regular.woff?V=2.7.2') format('woff'), url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/otf/MathJax_Caligraphic-Regular.otf?V=2.7.2') format('opentype')} @font-face {font-family: MathJax_Size1; src: url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Size1-Regular.woff?V=2.7.2') format('woff'), url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/otf/MathJax_Size1-Regular.otf?V=2.7.2') format('opentype')} @font-face {font-family: MathJax_Size2; src: url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Size2-Regular.woff?V=2.7.2') format('woff'), url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/otf/MathJax_Size2-Regular.otf?V=2.7.2') format('opentype')} @font-face {font-family: MathJax_Size3; src: url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Size3-Regular.woff?V=2.7.2') format('woff'), url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/otf/MathJax_Size3-Regular.otf?V=2.7.2') format('opentype')} @font-face {font-family: MathJax_Size4; src: url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/woff/MathJax_Size4-Regular.woff?V=2.7.2') format('woff'), url('https://csdnimg.cn/release/blog_mathjax/fonts/HTML-CSS/TeX/otf/MathJax_Size4-Regular.otf?V=2.7.2') format('opentype')} .MathJax .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}</style>
+      </head>
+      <body class="nodata " style="">    
+      <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/pc/css/blog_code-01256533b5.min.css"> 
+      <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/editerView/chart-3456820cac.css"> 
+        <div class="main_father clearfix  justify-content-center mainfather-concision" style="height:100%;"> 
+       <div class="container clearfix container-concision" id="mainBox" style="width:100%">  
+        <main style="width:100%">  
+        <div class="blog-content-box"> 
+            <div class="article-header-box">
+        <div class="article-header">
+            <div class="article-title-box">
+                <h1 class="title-article" id="articleContentId">【开发实录】基于YOLOv5+DeepSort的行人监控电子围栏系统</h1>
+            </div>
+            <div class="article-info-box">
+                <div class="article-bar-top">
+                    <img class="article-type-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/original.png" alt="">
+                    <div class="bar-content">
+                        <img class="article-vip-img article-heard-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/identityVip.png" alt="">
+                        <span class="article-vip-text vip_article"> VIP文章</span>
+                    <a class="follow-nickName " href="https://blog.csdn.net/weixin_44936889" target="_blank" rel="noopener" title="BIT可达鸭">BIT可达鸭</a>
+                    <img class="article-time-img article-heard-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/newCurrentTime2.png" alt="">
+                    <span class="time">于&nbsp;2021-01-25 19:33:15&nbsp;发布</span>
+                    <img class="article-read-img article-heard-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/articleReadEyes2.png" alt="">
+                    <span class="read-count">6188</span>
+                    <a id="blog_detail_zk_collection" class="un-collection" data-report-click="{&quot;mod&quot;:&quot;popu_823&quot;,&quot;spm&quot;:&quot;1001.2101.3001.4232&quot;,&quot;ab&quot;:&quot;new&quot;}">
+                        <img class="article-collect-img article-heard-img un-collect-status isdefault" style="display:inline-block" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarCollect2.png" alt="">
+                        <img class="article-collect-img article-heard-img collect-status isactive" style="display:none" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarCollectionActive2.png" alt="">
+                        <span class="name">收藏</span>
+                        <span class="get-collection">
+                            98
+                        </span>
+                    </a>
+                    </div>
+                </div>
+                <div class="blog-tags-box">
+                    <div class="tags-box artic-tag-box">
+                            <span class="label">分类专栏：</span>
+                                <a class="tag-link" href="https://blog.csdn.net/weixin_44936889/category_11268335.html" target="_blank" rel="noopener">▶ 深度学习-计算机视觉</a>
+                            <span class="label">文章标签：</span>
+                                <a data-report-click="{&quot;mod&quot;:&quot;popu_626&quot;,&quot;spm&quot;:&quot;1001.2101.3001.4223&quot;,&quot;strategy&quot;:&quot;python&quot;,&quot;ab&quot;:&quot;new&quot;,&quot;extra&quot;:&quot;{\&quot;searchword\&quot;:\&quot;python\&quot;}&quot;}" class="tag-link" href="https://so.csdn.net/so/search/s.do?q=python&amp;t=blog&amp;o=vip&amp;s=&amp;l=&amp;f=&amp;viparticle=" target="_blank" rel="noopener">python</a>
+                                <a data-report-click="{&quot;mod&quot;:&quot;popu_626&quot;,&quot;spm&quot;:&quot;1001.2101.3001.4223&quot;,&quot;strategy&quot;:&quot;计算机视觉&quot;,&quot;ab&quot;:&quot;new&quot;,&quot;extra&quot;:&quot;{\&quot;searchword\&quot;:\&quot;计算机视觉\&quot;}&quot;}" class="tag-link" href="https://so.csdn.net/so/search/s.do?q=%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89&amp;t=blog&amp;o=vip&amp;s=&amp;l=&amp;f=&amp;viparticle=" target="_blank" rel="noopener">计算机视觉</a>
+                                <a data-report-click="{&quot;mod&quot;:&quot;popu_626&quot;,&quot;spm&quot;:&quot;1001.2101.3001.4223&quot;,&quot;strategy&quot;:&quot;pyqt&quot;,&quot;ab&quot;:&quot;new&quot;,&quot;extra&quot;:&quot;{\&quot;searchword\&quot;:\&quot;pyqt\&quot;}&quot;}" class="tag-link" href="https://so.csdn.net/so/search/s.do?q=pyqt&amp;t=blog&amp;o=vip&amp;s=&amp;l=&amp;f=&amp;viparticle=" target="_blank" rel="noopener">pyqt</a>
+                                <a data-report-click="{&quot;mod&quot;:&quot;popu_626&quot;,&quot;spm&quot;:&quot;1001.2101.3001.4223&quot;,&quot;strategy&quot;:&quot;深度学习&quot;,&quot;ab&quot;:&quot;new&quot;,&quot;extra&quot;:&quot;{\&quot;searchword\&quot;:\&quot;深度学习\&quot;}&quot;}" class="tag-link" href="https://so.csdn.net/so/search/s.do?q=%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0&amp;t=blog&amp;o=vip&amp;s=&amp;l=&amp;f=&amp;viparticle=" target="_blank" rel="noopener">深度学习</a>
+                                <a data-report-click="{&quot;mod&quot;:&quot;popu_626&quot;,&quot;spm&quot;:&quot;1001.2101.3001.4223&quot;,&quot;strategy&quot;:&quot;pytorch&quot;,&quot;ab&quot;:&quot;new&quot;,&quot;extra&quot;:&quot;{\&quot;searchword\&quot;:\&quot;pytorch\&quot;}&quot;}" class="tag-link" href="https://so.csdn.net/so/search/s.do?q=pytorch&amp;t=blog&amp;o=vip&amp;s=&amp;l=&amp;f=&amp;viparticle=" target="_blank" rel="noopener">pytorch</a>
+                    </div>
+                </div>
+                <div class="slide-content-box">
+                    <div class="article-copyright">
+                        <div class="creativecommons">
+                            版权声明：本文为博主原创文章，遵循<a href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener"> CC 4.0 BY-SA </a>版权协议，转载请附上原文出处链接和本声明。
+                        </div>
+                        <div class="article-source-link">
+                            本文链接：<a href="https://blog.csdn.net/weixin_44936889/article/details/113129098" target="_blank">https://blog.csdn.net/weixin_44936889/article/details/113129098</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="operating">
+                    <a class="href-article-edit slide-toggle">版权</a>
+                </div>
+            </div>
+        </div>
+    </div>
+            <div id="blogHuaweiyunAdvert"></div> 
+            <article class="baidu_pl">
+        <div id="article_content" class="article_content clearfix">
+        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/editerView/kdoc_html_views-23cf357b0c.css">
+        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/editerView/ck_htmledit_views-6e43165c0a.css">
+                <div id="content_views" class="markdown_views prism-atom-one-light">
+                    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                        <path stroke-linecap="round" d="M5,0 0,2.5 5,5z" id="raphael-marker-block" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></path>
+                    </svg>
+                    <p></p>
+<div class="toc">
+ <h3><a name="t0"></a>【开发实录】基于<a href="https://so.csdn.net/so/search?q=YOLOv5&amp;spm=1001.2101.3001.7020" target="" class="hl hl-1" data-report-click="{&quot;spm&quot;:&quot;1001.2101.3001.7020&quot;,&quot;dest&quot;:&quot;https://so.csdn.net/so/search?q=YOLOv5&amp;spm=1001.2101.3001.7020&quot;,&quot;extra&quot;:&quot;{\&quot;searchword\&quot;:\&quot;YOLOv5\&quot;}&quot;}" data-tit="YOLOv5" data-pretit="yolov5">YOLOv5</a>+DeepSort的行人监控电子围栏系统</h3>
+ <ul><li><a href="#1__2" target="_self">1. 项目目标：</a></li><li><a href="#2__13" target="_self">2. 项目演示：</a></li><li><a href="#3_YOLOv5DeepSort_20" target="_self">3. YOLOv5目标检测+DeepSort目标追踪：</a></li><li><a href="#4_UI_170" target="_self">4. UI界面开发：</a></li><li><ul><li><a href="#41__172" target="_self">4.1 登录界面：</a></li><li><a href="#42__272" target="_self">4.2 加载界面：</a></li><li><a href="#43__306" target="_self">4.3 主界面：</a></li><li><a href="#44__371" target="_self">4.4 美化界面：</a></li></ul>
+  </li><li><a href="#5_UI_386" target="_self">5. UI功能开发：</a></li><li><ul><li><a href="#51__387" target="_self">5.1 绑定槽函数：</a></li><li><a href="#52_UI_411" target="_self">5.2 在UI中显示视频：</a></li><li><a href="#53__459" target="_self">5.3 相应鼠标绘制区域：</a></li><li><a href="#54__475" target="_self">5.4 其他细节：</a></li></ul>
+  </li><li><a href="#6__563" target="_self">6. 部署方案：</a></li><li><ul><li><a href="#61__564" target="_self">6.1 端侧视频推流：</a></li><li><a href="#62_Flask_609" target="_self">6.2 Flask部署：</a></li></ul>
+  </li><li><a href="#7__699" target="_self">7. 联系作者：</a></li><li><a href="#_709" target="_self">关注我的公众号：</a></li></ul>
+</div>
+<p></p> 
+<h1><a name="t1"></a><a id="1__2"></a>1. 项目目标：</h1> 
+<p>本项目目标为开发基于YOLOv5+DeepSort的行人监控电子围栏系统，功能包括：</p> 
+<ol><li>行人检测和追踪；</li><li>危险区域鉴定；</li><li>爬墙检测；</li><li>长时间逗留检测；</li><li>行人聚集检测；</li></ol> 
+<p>项目使用PyQt5进行软件界面开发。</p> 
+<h1><a name="t2"></a><a id="2__13"></a>2. 项目演示：</h1> 
+<p>Bilibili：</p> 
+<p></p>
+<div class="csdn-video-box">
+ <iframe id="Jm7n15Rp-1611569781163" src="https://player.bilibili.com/player.html?aid=373846150" allowfullscreen="true" data-mediaembed="bilibili"></iframe>
+ <p>基于YOLOv5+DeepSort的行人监控电子围栏系统 V2.0</p>
+</div>
+<p></p> 
+<p>软件截图：<br> <img src="https://img-blog.csdnimg.cn/20210125181825126.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDkzNjg4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p> 
+<h1><a name="t3"></a><a id="3_YOLOv5DeepSort_20"></a>3. YOLOv5目标检测+DeepSort目标追踪：</h1> 
+<p>代码地址：</p> 
+<p><a href="https://github.com/Sharpiless/Yolov5-deepsort-inference">https://github.com/Sharpiless/Yolov5-deepsort-inference</a></p> 
+<p>如何使用YOLOv5训练自己的数据集请看这篇：</p> 
+<p><a href="https://blog.csdn.net/weixin_44936889/article/details/110661862">【小白CV】手把手教你用YOLOv5训练自己的数据集（从Windows环境配置到模型部署）</a></p> 
+<p>训练好后，放到weights文件夹下：</p> 
+<p><img src="https://img-blog.csdnimg.cn/20210125182210657.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDkzNjg4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br> 编写检测类：</p> 
+<ul><li>基础检测器</li></ul> 
+<pre data-index="0" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">from</span> <span class="token punctuation">.</span>tracker_deep <span class="token keyword">import</span> update_tracker
+<span class="token keyword">import</span> cv2
+
+
+<span class="token keyword">class</span> <span class="token class-name">baseDet</span><span class="token punctuation">(</span><span class="token builtin">object</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> tracker_type<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+        self<span class="token punctuation">.</span>img_size <span class="token operator">=</span> <span class="token number">640</span>
+        self<span class="token punctuation">.</span>threshold <span class="token operator">=</span> <span class="token number">0.4</span>
+        self<span class="token punctuation">.</span>max_frame <span class="token operator">=</span> <span class="token number">160</span>
+        self<span class="token punctuation">.</span>stride <span class="token operator">=</span> <span class="token number">2</span>
+        self<span class="token punctuation">.</span>illegal_num <span class="token operator">=</span> <span class="token number">0</span>
+        self<span class="token punctuation">.</span>tracker_type <span class="token operator">=</span> tracker_type
+
+    <span class="token keyword">def</span> <span class="token function">build_config</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+        self<span class="token punctuation">.</span>faceTracker <span class="token operator">=</span> <span class="token punctuation">{<!-- --></span><span class="token punctuation">}</span>
+        self<span class="token punctuation">.</span>illegals <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+        self<span class="token punctuation">.</span>faceClasses <span class="token operator">=</span> <span class="token punctuation">{<!-- --></span><span class="token punctuation">}</span>
+        self<span class="token punctuation">.</span>faceregister <span class="token operator">=</span> <span class="token punctuation">{<!-- --></span><span class="token punctuation">}</span>
+        self<span class="token punctuation">.</span>faceLocation1 <span class="token operator">=</span> <span class="token punctuation">{<!-- --></span><span class="token punctuation">}</span>
+        self<span class="token punctuation">.</span>faceLocation2 <span class="token operator">=</span> <span class="token punctuation">{<!-- --></span><span class="token punctuation">}</span>
+        self<span class="token punctuation">.</span>frameCounter <span class="token operator">=</span> <span class="token number">0</span>
+        self<span class="token punctuation">.</span>currentCarID <span class="token operator">=</span> <span class="token number">0</span>
+        self<span class="token punctuation">.</span>recorded <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+
+        self<span class="token punctuation">.</span>font <span class="token operator">=</span> cv2<span class="token punctuation">.</span>FONT_HERSHEY_SIMPLEX
+
+    <span class="token keyword">def</span> <span class="token function">feedCap</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> im<span class="token punctuation">,</span> isChecked<span class="token punctuation">,</span> region_bbox2draw<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+        retDict <span class="token operator">=</span> <span class="token punctuation">{<!-- --></span>
+            <span class="token string">'frame'</span><span class="token punctuation">:</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+            <span class="token string">'faces'</span><span class="token punctuation">:</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+            <span class="token string">'list_of_ids'</span><span class="token punctuation">:</span> <span class="token boolean">None</span><span class="token punctuation">,</span>
+            <span class="token string">'face_bboxes'</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+        <span class="token punctuation">}</span>
+        self<span class="token punctuation">.</span>frameCounter <span class="token operator">+=</span> <span class="token number">1</span>
+
+        im<span class="token punctuation">,</span> faces<span class="token punctuation">,</span> face_bboxes <span class="token operator">=</span> update_tracker<span class="token punctuation">(</span>
+            self<span class="token punctuation">,</span> im<span class="token punctuation">,</span> region_bbox2draw<span class="token punctuation">,</span> isChecked<span class="token punctuation">)</span>
+
+        retDict<span class="token punctuation">[</span><span class="token string">'frame'</span><span class="token punctuation">]</span> <span class="token operator">=</span> im
+        retDict<span class="token punctuation">[</span><span class="token string">'faces'</span><span class="token punctuation">]</span> <span class="token operator">=</span> faces
+        retDict<span class="token punctuation">[</span><span class="token string">'face_bboxes'</span><span class="token punctuation">]</span> <span class="token operator">=</span> face_bboxes
+
+        <span class="token keyword">return</span> retDict
+
+    <span class="token keyword">def</span> <span class="token function">init_model</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">raise</span> EOFError<span class="token punctuation">(</span><span class="token string">"Undefined model type."</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">preprocess</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">raise</span> EOFError<span class="token punctuation">(</span><span class="token string">"Undefined model type."</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">detect</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">raise</span> EOFError<span class="token punctuation">(</span><span class="token string">"Undefined model type."</span><span class="token punctuation">)</span>
+
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li><li style="color: rgb(153, 153, 153);">4</li><li style="color: rgb(153, 153, 153);">5</li><li style="color: rgb(153, 153, 153);">6</li><li style="color: rgb(153, 153, 153);">7</li><li style="color: rgb(153, 153, 153);">8</li><li style="color: rgb(153, 153, 153);">9</li><li style="color: rgb(153, 153, 153);">10</li><li style="color: rgb(153, 153, 153);">11</li><li style="color: rgb(153, 153, 153);">12</li><li style="color: rgb(153, 153, 153);">13</li><li style="color: rgb(153, 153, 153);">14</li><li style="color: rgb(153, 153, 153);">15</li><li style="color: rgb(153, 153, 153);">16</li><li style="color: rgb(153, 153, 153);">17</li><li style="color: rgb(153, 153, 153);">18</li><li style="color: rgb(153, 153, 153);">19</li><li style="color: rgb(153, 153, 153);">20</li><li style="color: rgb(153, 153, 153);">21</li><li style="color: rgb(153, 153, 153);">22</li><li style="color: rgb(153, 153, 153);">23</li><li style="color: rgb(153, 153, 153);">24</li><li style="color: rgb(153, 153, 153);">25</li><li style="color: rgb(153, 153, 153);">26</li><li style="color: rgb(153, 153, 153);">27</li><li style="color: rgb(153, 153, 153);">28</li><li style="color: rgb(153, 153, 153);">29</li><li style="color: rgb(153, 153, 153);">30</li><li style="color: rgb(153, 153, 153);">31</li><li style="color: rgb(153, 153, 153);">32</li><li style="color: rgb(153, 153, 153);">33</li><li style="color: rgb(153, 153, 153);">34</li><li style="color: rgb(153, 153, 153);">35</li><li style="color: rgb(153, 153, 153);">36</li><li style="color: rgb(153, 153, 153);">37</li><li style="color: rgb(153, 153, 153);">38</li><li style="color: rgb(153, 153, 153);">39</li><li style="color: rgb(153, 153, 153);">40</li><li style="color: rgb(153, 153, 153);">41</li><li style="color: rgb(153, 153, 153);">42</li><li style="color: rgb(153, 153, 153);">43</li><li style="color: rgb(153, 153, 153);">44</li><li style="color: rgb(153, 153, 153);">45</li><li style="color: rgb(153, 153, 153);">46</li><li style="color: rgb(153, 153, 153);">47</li><li style="color: rgb(153, 153, 153);">48</li><li style="color: rgb(153, 153, 153);">49</li><li style="color: rgb(153, 153, 153);">50</li><li style="color: rgb(153, 153, 153);">51</li><li style="color: rgb(153, 153, 153);">52</li><li style="color: rgb(153, 153, 153);">53</li><li style="color: rgb(153, 153, 153);">54</li><li style="color: rgb(153, 153, 153);">55</li><li style="color: rgb(153, 153, 153);">56</li><li style="color: rgb(153, 153, 153);">57</li></ul></pre> 
+<ul><li>YOLOv5检测器：</li></ul> 
+<pre data-index="1" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">import</span> torch
+<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
+<span class="token keyword">from</span> models<span class="token punctuation">.</span>experimental <span class="token keyword">import</span> attempt_load
+<span class="token keyword">from</span> utils<span class="token punctuation">.</span>general <span class="token keyword">import</span> non_max_suppression<span class="token punctuation">,</span> scale_coords<span class="token punctuation">,</span> letterbox
+<span class="token keyword">from</span> utils<span class="token punctuation">.</span>torch_utils <span class="token keyword">import</span> select_device
+<span class="token keyword">from</span> <span class="token punctuation">.</span>BaseDetector <span class="token keyword">import</span> baseDet
+
+
+<span class="token keyword">class</span> <span class="token class-name">Detector</span><span class="token punctuation">(</span>baseDet<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> tracker_type<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token builtin">super</span><span class="token punctuation">(</span>Detector<span class="token punctuation">,</span> self<span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span>tracker_type<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>init_model<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>build_config<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">init_model</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+        self<span class="token punctuation">.</span>weights <span class="token operator">=</span> <span class="token string">'weights/final.pt'</span>
+        self<span class="token punctuation">.</span>device <span class="token operator">=</span> <span class="token string">'0'</span> <span class="token keyword">if</span> torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>is_available<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">else</span> <span class="token string">'cpu'</span>
+        self<span class="token punctuation">.</span>device <span class="token operator">=</span> select_device<span class="token punctuation">(</span>self<span class="token punctuation">.</span>device<span class="token punctuation">)</span>
+        model <span class="token operator">=</span> attempt_load<span class="token punctuation">(</span>self<span class="token punctuation">.</span>weights<span class="token punctuation">,</span> map_location<span class="token operator">=</span>self<span class="token punctuation">.</span>device<span class="token punctuation">)</span>
+        model<span class="token punctuation">.</span>to<span class="token punctuation">(</span>self<span class="token punctuation">.</span>device<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token builtin">eval</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        model<span class="token punctuation">.</span>half<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token comment"># torch.save(model, 'test.pt')</span>
+        self<span class="token punctuation">.</span>m <span class="token operator">=</span> model
+        self<span class="token punctuation">.</span>names <span class="token operator">=</span> model<span class="token punctuation">.</span>module<span class="token punctuation">.</span>names <span class="token keyword">if</span> <span class="token builtin">hasattr</span><span class="token punctuation">(</span>
+            model<span class="token punctuation">,</span> <span class="token string">'module'</span><span class="token punctuation">)</span> <span class="token keyword">else</span> model<span class="token punctuation">.</span>names
+
+    <span class="token keyword">def</span> <span class="token function">preprocess</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> img<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+        img0 <span class="token operator">=</span> img<span class="token punctuation">.</span>copy<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        img <span class="token operator">=</span> letterbox<span class="token punctuation">(</span>img<span class="token punctuation">,</span> new_shape<span class="token operator">=</span>self<span class="token punctuation">.</span>img_size<span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+        img <span class="token operator">=</span> img<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token punctuation">:</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>transpose<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>
+        img <span class="token operator">=</span> np<span class="token punctuation">.</span>ascontiguousarray<span class="token punctuation">(</span>img<span class="token punctuation">)</span>
+        img <span class="token operator">=</span> torch<span class="token punctuation">.</span>from_numpy<span class="token punctuation">(</span>img<span class="token punctuation">)</span><span class="token punctuation">.</span>to<span class="token punctuation">(</span>self<span class="token punctuation">.</span>device<span class="token punctuation">)</span>
+        img <span class="token operator">=</span> img<span class="token punctuation">.</span>half<span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment"># 半精度</span>
+        img <span class="token operator">/=</span> <span class="token number">255.0</span>  <span class="token comment"># 图像归一化</span>
+        <span class="token keyword">if</span> img<span class="token punctuation">.</span>ndimension<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">3</span><span class="token punctuation">:</span>
+            img <span class="token operator">=</span> img<span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span>
+
+        <span class="token keyword">return</span> img0<span class="token punctuation">,</span> img
+
+    <span class="token keyword">def</span> <span class="token function">detect</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> im<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+        im0<span class="token punctuation">,</span> img <span class="token operator">=</span> self<span class="token punctuation">.</span>preprocess<span class="token punctuation">(</span>im<span class="token punctuation">)</span>
+
+        pred <span class="token operator">=</span> self<span class="token punctuation">.</span>m<span class="token punctuation">(</span>img<span class="token punctuation">,</span> augment<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+        pred <span class="token operator">=</span> pred<span class="token punctuation">.</span><span class="token builtin">float</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        pred <span class="token operator">=</span> non_max_suppression<span class="token punctuation">(</span>pred<span class="token punctuation">,</span> self<span class="token punctuation">.</span>threshold<span class="token punctuation">,</span> <span class="token number">0.3</span><span class="token punctuation">)</span>
+
+        pred_boxes <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+        <span class="token keyword">for</span> det <span class="token keyword">in</span> pred<span class="token punctuation">:</span>
+
+            <span class="token keyword">if</span> det <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span> <span class="token keyword">and</span> <span class="token builtin">len</span><span class="token punctuation">(</span>det<span class="token punctuation">)</span><span class="token punctuation">:</span>
+                det<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token punctuation">:</span><span class="token number">4</span><span class="token punctuation">]</span> <span class="token operator">=</span> scale_coords<span class="token punctuation">(</span>
+                    img<span class="token punctuation">.</span>shape<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">:</span><span class="token punctuation">]</span><span class="token punctuation">,</span> det<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span> <span class="token punctuation">:</span><span class="token number">4</span><span class="token punctuation">]</span><span class="token punctuation">,</span> im0<span class="token punctuation">.</span>shape<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token builtin">round</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+                <span class="token keyword">for</span> <span class="token operator">*</span>x<span class="token punctuation">,</span> conf<span class="token punctuation">,</span> cls_id <span class="token keyword">in</span> det<span class="token punctuation">:</span>
+                    lbl <span class="token operator">=</span> self<span class="token punctuation">.</span>names<span class="token punctuation">[</span><span class="token builtin">int</span><span class="token punctuation">(</span>cls_id<span class="token punctuation">)</span><span class="token punctuation">]</span>
+                    <span class="token keyword">if</span> <span class="token keyword">not</span> lbl <span class="token operator">==</span> <span class="token string">'person'</span><span class="token punctuation">:</span>
+                        <span class="token keyword">continue</span>
+                    x1<span class="token punctuation">,</span> y1 <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>x<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token builtin">int</span><span class="token punctuation">(</span>x<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+                    x2<span class="token punctuation">,</span> y2 <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>x<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token builtin">int</span><span class="token punctuation">(</span>x<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+                    pred_boxes<span class="token punctuation">.</span>append<span class="token punctuation">(</span>
+                        <span class="token punctuation">(</span>x1<span class="token punctuation">,</span> y1<span class="token punctuation">,</span> x2<span class="token punctuation">,</span> y2<span class="token punctuation">,</span> lbl<span class="token punctuation">,</span> conf<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+        <span class="token keyword">return</span> im<span class="token punctuation">,</span> pred_boxes
+
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li><li style="color: rgb(153, 153, 153);">4</li><li style="color: rgb(153, 153, 153);">5</li><li style="color: rgb(153, 153, 153);">6</li><li style="color: rgb(153, 153, 153);">7</li><li style="color: rgb(153, 153, 153);">8</li><li style="color: rgb(153, 153, 153);">9</li><li style="color: rgb(153, 153, 153);">10</li><li style="color: rgb(153, 153, 153);">11</li><li style="color: rgb(153, 153, 153);">12</li><li style="color: rgb(153, 153, 153);">13</li><li style="color: rgb(153, 153, 153);">14</li><li style="color: rgb(153, 153, 153);">15</li><li style="color: rgb(153, 153, 153);">16</li><li style="color: rgb(153, 153, 153);">17</li><li style="color: rgb(153, 153, 153);">18</li><li style="color: rgb(153, 153, 153);">19</li><li style="color: rgb(153, 153, 153);">20</li><li style="color: rgb(153, 153, 153);">21</li><li style="color: rgb(153, 153, 153);">22</li><li style="color: rgb(153, 153, 153);">23</li><li style="color: rgb(153, 153, 153);">24</li><li style="color: rgb(153, 153, 153);">25</li><li style="color: rgb(153, 153, 153);">26</li><li style="color: rgb(153, 153, 153);">27</li><li style="color: rgb(153, 153, 153);">28</li><li style="color: rgb(153, 153, 153);">29</li><li style="color: rgb(153, 153, 153);">30</li><li style="color: rgb(153, 153, 153);">31</li><li style="color: rgb(153, 153, 153);">32</li><li style="color: rgb(153, 153, 153);">33</li><li style="color: rgb(153, 153, 153);">34</li><li style="color: rgb(153, 153, 153);">35</li><li style="color: rgb(153, 153, 153);">36</li><li style="color: rgb(153, 153, 153);">37</li><li style="color: rgb(153, 153, 153);">38</li><li style="color: rgb(153, 153, 153);">39</li><li style="color: rgb(153, 153, 153);">40</li><li style="color: rgb(153, 153, 153);">41</li><li style="color: rgb(153, 153, 153);">42</li><li style="color: rgb(153, 153, 153);">43</li><li style="color: rgb(153, 153, 153);">44</li><li style="color: rgb(153, 153, 153);">45</li><li style="color: rgb(153, 153, 153);">46</li><li style="color: rgb(153, 153, 153);">47</li><li style="color: rgb(153, 153, 153);">48</li><li style="color: rgb(153, 153, 153);">49</li><li style="color: rgb(153, 153, 153);">50</li><li style="color: rgb(153, 153, 153);">51</li><li style="color: rgb(153, 153, 153);">52</li><li style="color: rgb(153, 153, 153);">53</li><li style="color: rgb(153, 153, 153);">54</li><li style="color: rgb(153, 153, 153);">55</li><li style="color: rgb(153, 153, 153);">56</li><li style="color: rgb(153, 153, 153);">57</li><li style="color: rgb(153, 153, 153);">58</li><li style="color: rgb(153, 153, 153);">59</li><li style="color: rgb(153, 153, 153);">60</li><li style="color: rgb(153, 153, 153);">61</li><li style="color: rgb(153, 153, 153);">62</li><li style="color: rgb(153, 153, 153);">63</li><li style="color: rgb(153, 153, 153);">64</li><li style="color: rgb(153, 153, 153);">65</li><li style="color: rgb(153, 153, 153);">66</li><li style="color: rgb(153, 153, 153);">67</li><li style="color: rgb(153, 153, 153);">68</li></ul></pre> 
+<p>检测效果：<br> <img src="https://img-blog.csdnimg.cn/20210125182631954.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDkzNjg4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p> 
+<h1><a name="t4"></a><a id="4_UI_170"></a>4. UI界面开发：</h1> 
+<h2><a name="t5"></a><a id="41__172"></a>4.1 登录界面：</h2> 
+<p>这里写一个简单的登录界面：</p> 
+<pre data-index="2" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">import</span> sys
+<span class="token keyword">from</span> PyQt5<span class="token punctuation">.</span>QtCore <span class="token keyword">import</span> Qt
+<span class="token keyword">from</span> PyQt5<span class="token punctuation">.</span>QtGui <span class="token keyword">import</span> QPixmap<span class="token punctuation">,</span> QFont<span class="token punctuation">,</span> QIcon
+<span class="token keyword">from</span> PyQt5<span class="token punctuation">.</span>QtWidgets <span class="token keyword">import</span> QWidget<span class="token punctuation">,</span> QApplication<span class="token punctuation">,</span> QLabel<span class="token punctuation">,</span> QDesktopWidget<span class="token punctuation">,</span> QHBoxLayout<span class="token punctuation">,</span> QFormLayout<span class="token punctuation">,</span> \
+    QPushButton<span class="token punctuation">,</span> QLineEdit<span class="token punctuation">,</span> QMainWindow
+
+
+<span class="token keyword">class</span> <span class="token class-name">LoginForm</span><span class="token punctuation">(</span>QMainWindow<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token builtin">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>initUI<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">initUI</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token triple-quoted-string string">"""
+        初始化UI
+        :return:
+        """</span>
+        self<span class="token punctuation">.</span>setObjectName<span class="token punctuation">(</span><span class="token string">"loginWindow"</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>setStyleSheet<span class="token punctuation">(</span><span class="token string">'#loginWindow{background-color:white}'</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>setFixedSize<span class="token punctuation">(</span><span class="token number">650</span><span class="token punctuation">,</span> <span class="token number">300</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>setWindowTitle<span class="token punctuation">(</span><span class="token string">"登录"</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>setWindowIcon<span class="token punctuation">(</span>QIcon<span class="token punctuation">(</span><span class="token string">'data/logo.png'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+        <span class="token comment"># 登录表单内容部分</span>
+        login_widget <span class="token operator">=</span> QWidget<span class="token punctuation">(</span>self<span class="token punctuation">)</span>
+        login_widget<span class="token punctuation">.</span>move<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span>
+        login_widget<span class="token punctuation">.</span>setGeometry<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">650</span><span class="token punctuation">,</span> <span class="token number">260</span><span class="token punctuation">)</span>
+
+        hbox <span class="token operator">=</span> QHBoxLayout<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token comment"># 添加左侧logo</span>
+        logolb <span class="token operator">=</span> QLabel<span class="token punctuation">(</span>self<span class="token punctuation">)</span>
+        logopix <span class="token operator">=</span> QPixmap<span class="token punctuation">(</span><span class="token string">"web/logo.png"</span><span class="token punctuation">)</span>
+        logolb<span class="token punctuation">.</span>setPixmap<span class="token punctuation">(</span>logopix<span class="token punctuation">)</span>
+        logolb<span class="token punctuation">.</span>setAlignment<span class="token punctuation">(</span>Qt<span class="token punctuation">.</span>AlignCenter<span class="token punctuation">)</span>
+        hbox<span class="token punctuation">.</span>addWidget<span class="token punctuation">(</span>logolb<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>
+        <span class="token comment"># 添加右侧表单</span>
+        fmlayout <span class="token operator">=</span> QFormLayout<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        lbl_workerid <span class="token operator">=</span> QLabel<span class="token punctuation">(</span><span class="token string">"用户名"</span><span class="token punctuation">)</span>
+        lbl_workerid<span class="token punctuation">.</span>setFont<span class="token punctuation">(</span>QFont<span class="token punctuation">(</span><span class="token string">"Microsoft YaHei"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        led_workerid <span class="token operator">=</span> QLineEdit<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        led_workerid<span class="token punctuation">.</span>setFixedWidth<span class="token punctuation">(</span><span class="token number">270</span><span class="token punctuation">)</span>
+        led_workerid<span class="token punctuation">.</span>setFixedHeight<span class="token punctuation">(</span><span class="token number">38</span><span class="token punctuation">)</span>
+
+        lbl_pwd <span class="token operator">=</span> QLabel<span class="token punctuation">(</span><span class="token string">"密码"</span><span class="token punctuation">)</span>
+        lbl_pwd<span class="token punctuation">.</span>setFont<span class="token punctuation">(</span>QFont<span class="token punctuation">(</span><span class="token string">"Microsoft YaHei"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        led_pwd <span class="token operator">=</span> QLineEdit<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        led_pwd<span class="token punctuation">.</span>setEchoMode<span class="token punctuation">(</span>QLineEdit<span class="token punctuation">.</span>Password<span class="token punctuation">)</span>
+        led_pwd<span class="token punctuation">.</span>setFixedWidth<span class="token punctuation">(</span><span class="token number">270</span><span class="token punctuation">)</span>
+        led_pwd<span class="token punctuation">.</span>setFixedHeight<span class="token punctuation">(</span><span class="token number">38</span><span class="token punctuation">)</span>
+
+        self<span class="token punctuation">.</span>btn_login <span class="token operator">=</span> QPushButton<span class="token punctuation">(</span><span class="token string">"登录"</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>btn_login<span class="token punctuation">.</span>setFixedWidth<span class="token punctuation">(</span><span class="token number">270</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>btn_login<span class="token punctuation">.</span>setFixedHeight<span class="token punctuation">(</span><span class="token number">40</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>btn_login<span class="token punctuation">.</span>setFont<span class="token punctuation">(</span>QFont<span class="token punctuation">(</span><span class="token string">"Microsoft YaHei"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>btn_login<span class="token punctuation">.</span>setObjectName<span class="token punctuation">(</span><span class="token string">"login_btn"</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>btn_login<span class="token punctuation">.</span>setStyleSheet<span class="token punctuation">(</span>
+            <span class="token string">"#login_btn{background-color:#2c7adf;color:#fff;border:none;border-radius:4px;}"</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>btn_login<span class="token punctuation">.</span>clicked<span class="token punctuation">.</span>connect<span class="token punctuation">(</span>
+            <span class="token keyword">lambda</span> <span class="token punctuation">:</span> self<span class="token punctuation">.</span>close_logui<span class="token punctuation">(</span>led_workerid<span class="token punctuation">.</span>text<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> led_pwd<span class="token punctuation">.</span>text<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token punctuation">)</span>
+
+        fmlayout<span class="token punctuation">.</span>addRow<span class="token punctuation">(</span>lbl_workerid<span class="token punctuation">,</span> led_workerid<span class="token punctuation">)</span>
+        fmlayout<span class="token punctuation">.</span>addRow<span class="token punctuation">(</span>lbl_pwd<span class="token punctuation">,</span> led_pwd<span class="token punctuation">)</span>
+        fmlayout<span class="token punctuation">.</span>addWidget<span class="token punctuation">(</span>self<span class="token punctuation">.</span>btn_login<span class="token punctuation">)</span>
+        hbox<span class="token punctuation">.</span>setAlignment<span class="token punctuation">(</span>Qt<span class="token punctuation">.</span>AlignCenter<span class="token punctuation">)</span>
+        <span class="token comment"># 调整间距</span>
+        fmlayout<span class="token punctuation">.</span>setHorizontalSpacing<span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span>
+        fmlayout<span class="token punctuation">.</span>setVerticalSpacing<span class="token punctuation">(</span><span class="token number">12</span><span class="token punctuation">)</span>
+
+        hbox<span class="token punctuation">.</span>addLayout<span class="token punctuation">(</span>fmlayout<span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span>
+
+        login_widget<span class="token punctuation">.</span>setLayout<span class="token punctuation">(</span>hbox<span class="token punctuation">)</span>
+
+        self<span class="token punctuation">.</span>center<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">close_logui</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> user<span class="token punctuation">,</span> password<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'-[INFO] User:{} Password:{}'</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>user<span class="token punctuation">,</span> password<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">center</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        qr <span class="token operator">=</span> self<span class="token punctuation">.</span>frameGeometry<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        cp <span class="token operator">=</span> QDesktopWidget<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>availableGeometry<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>center<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        qr<span class="token punctuation">.</span>moveCenter<span class="token punctuation">(</span>cp<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>move<span class="token punctuation">(</span>qr<span class="token punctuation">.</span>topLeft<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    app <span class="token operator">=</span> QApplication<span class="token punctuation">(</span>sys<span class="token punctuation">.</span>argv<span class="token punctuation">)</span>
+    ex <span class="token operator">=</span> LoginForm<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    sys<span class="token punctuation">.</span>exit<span class="token punctuation">(</span>app<span class="token punctuation">.</span>exec_<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li><li style="color: rgb(153, 153, 153);">4</li><li style="color: rgb(153, 153, 153);">5</li><li style="color: rgb(153, 153, 153);">6</li><li style="color: rgb(153, 153, 153);">7</li><li style="color: rgb(153, 153, 153);">8</li><li style="color: rgb(153, 153, 153);">9</li><li style="color: rgb(153, 153, 153);">10</li><li style="color: rgb(153, 153, 153);">11</li><li style="color: rgb(153, 153, 153);">12</li><li style="color: rgb(153, 153, 153);">13</li><li style="color: rgb(153, 153, 153);">14</li><li style="color: rgb(153, 153, 153);">15</li><li style="color: rgb(153, 153, 153);">16</li><li style="color: rgb(153, 153, 153);">17</li><li style="color: rgb(153, 153, 153);">18</li><li style="color: rgb(153, 153, 153);">19</li><li style="color: rgb(153, 153, 153);">20</li><li style="color: rgb(153, 153, 153);">21</li><li style="color: rgb(153, 153, 153);">22</li><li style="color: rgb(153, 153, 153);">23</li><li style="color: rgb(153, 153, 153);">24</li><li style="color: rgb(153, 153, 153);">25</li><li style="color: rgb(153, 153, 153);">26</li><li style="color: rgb(153, 153, 153);">27</li><li style="color: rgb(153, 153, 153);">28</li><li style="color: rgb(153, 153, 153);">29</li><li style="color: rgb(153, 153, 153);">30</li><li style="color: rgb(153, 153, 153);">31</li><li style="color: rgb(153, 153, 153);">32</li><li style="color: rgb(153, 153, 153);">33</li><li style="color: rgb(153, 153, 153);">34</li><li style="color: rgb(153, 153, 153);">35</li><li style="color: rgb(153, 153, 153);">36</li><li style="color: rgb(153, 153, 153);">37</li><li style="color: rgb(153, 153, 153);">38</li><li style="color: rgb(153, 153, 153);">39</li><li style="color: rgb(153, 153, 153);">40</li><li style="color: rgb(153, 153, 153);">41</li><li style="color: rgb(153, 153, 153);">42</li><li style="color: rgb(153, 153, 153);">43</li><li style="color: rgb(153, 153, 153);">44</li><li style="color: rgb(153, 153, 153);">45</li><li style="color: rgb(153, 153, 153);">46</li><li style="color: rgb(153, 153, 153);">47</li><li style="color: rgb(153, 153, 153);">48</li><li style="color: rgb(153, 153, 153);">49</li><li style="color: rgb(153, 153, 153);">50</li><li style="color: rgb(153, 153, 153);">51</li><li style="color: rgb(153, 153, 153);">52</li><li style="color: rgb(153, 153, 153);">53</li><li style="color: rgb(153, 153, 153);">54</li><li style="color: rgb(153, 153, 153);">55</li><li style="color: rgb(153, 153, 153);">56</li><li style="color: rgb(153, 153, 153);">57</li><li style="color: rgb(153, 153, 153);">58</li><li style="color: rgb(153, 153, 153);">59</li><li style="color: rgb(153, 153, 153);">60</li><li style="color: rgb(153, 153, 153);">61</li><li style="color: rgb(153, 153, 153);">62</li><li style="color: rgb(153, 153, 153);">63</li><li style="color: rgb(153, 153, 153);">64</li><li style="color: rgb(153, 153, 153);">65</li><li style="color: rgb(153, 153, 153);">66</li><li style="color: rgb(153, 153, 153);">67</li><li style="color: rgb(153, 153, 153);">68</li><li style="color: rgb(153, 153, 153);">69</li><li style="color: rgb(153, 153, 153);">70</li><li style="color: rgb(153, 153, 153);">71</li><li style="color: rgb(153, 153, 153);">72</li><li style="color: rgb(153, 153, 153);">73</li><li style="color: rgb(153, 153, 153);">74</li><li style="color: rgb(153, 153, 153);">75</li><li style="color: rgb(153, 153, 153);">76</li><li style="color: rgb(153, 153, 153);">77</li><li style="color: rgb(153, 153, 153);">78</li><li style="color: rgb(153, 153, 153);">79</li><li style="color: rgb(153, 153, 153);">80</li><li style="color: rgb(153, 153, 153);">81</li><li style="color: rgb(153, 153, 153);">82</li><li style="color: rgb(153, 153, 153);">83</li><li style="color: rgb(153, 153, 153);">84</li><li style="color: rgb(153, 153, 153);">85</li><li style="color: rgb(153, 153, 153);">86</li><li style="color: rgb(153, 153, 153);">87</li><li style="color: rgb(153, 153, 153);">88</li><li style="color: rgb(153, 153, 153);">89</li><li style="color: rgb(153, 153, 153);">90</li><li style="color: rgb(153, 153, 153);">91</li><li style="color: rgb(153, 153, 153);">92</li><li style="color: rgb(153, 153, 153);">93</li></ul></pre> 
+<p>效果：<br> <img src="https://img-blog.csdnimg.cn/20210125183028709.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDkzNjg4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p> 
+<h2><a name="t6"></a><a id="42__272"></a>4.2 加载界面：</h2> 
+<p>由于 yolov5 模型加载较慢，所以我们需要写一个加载进度界面，核心代码：</p> 
+<pre data-index="3" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">def</span> <span class="token function">load_data</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> sp<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">11</span><span class="token punctuation">)</span><span class="token punctuation">:</span>  <span class="token comment"># 模拟主程序加载过程</span>
+            time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">)</span>                   <span class="token comment"># 加载数据</span>
+            sp<span class="token punctuation">.</span>showMessage<span class="token punctuation">(</span><span class="token string">"加载... {0}%"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>
+                i <span class="token operator">*</span> <span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">,</span> QtCore<span class="token punctuation">.</span>Qt<span class="token punctuation">.</span>AlignHCenter <span class="token operator">|</span> QtCore<span class="token punctuation">.</span>Qt<span class="token punctuation">.</span>AlignBottom<span class="token punctuation">,</span> QtCore<span class="token punctuation">.</span>Qt<span class="token punctuation">.</span>black<span class="token punctuation">)</span>
+            QtWidgets<span class="token punctuation">.</span>qApp<span class="token punctuation">.</span>processEvents<span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment"># 允许主进程处理事件</span>
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li><li style="color: rgb(153, 153, 153);">4</li><li style="color: rgb(153, 153, 153);">5</li><li style="color: rgb(153, 153, 153);">6</li></ul></pre> 
+<pre data-index="4" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">def</span> <span class="token function">main</span><span class="token punctuation">(</span>opt<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">'''
+    启动PyQt5程序，打开GUI界面
+    '''</span>
+    app <span class="token operator">=</span> QApplication<span class="token punctuation">(</span>sys<span class="token punctuation">.</span>argv<span class="token punctuation">)</span>
+    splash <span class="token operator">=</span> QtWidgets<span class="token punctuation">.</span>QSplashScreen<span class="token punctuation">(</span>QtGui<span class="token punctuation">.</span>QPixmap<span class="token punctuation">(</span><span class="token string">"data/logo.png"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    splash<span class="token punctuation">.</span>showMessage<span class="token punctuation">(</span><span class="token string">"加载... 0%"</span><span class="token punctuation">,</span> QtCore<span class="token punctuation">.</span>Qt<span class="token punctuation">.</span>AlignHCenter<span class="token punctuation">,</span> QtCore<span class="token punctuation">.</span>Qt<span class="token punctuation">.</span>black<span class="token punctuation">)</span>
+    splash<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>                           <span class="token comment"># 显示启动界面</span>
+    QtWidgets<span class="token punctuation">.</span>qApp<span class="token punctuation">.</span>processEvents<span class="token punctuation">(</span><span class="token punctuation">)</span>          <span class="token comment"># 处理主进程事件</span>
+    main_window <span class="token operator">=</span> MainWindow<span class="token punctuation">(</span>opt<span class="token punctuation">)</span>
+    main_window<span class="token punctuation">.</span>load_data<span class="token punctuation">(</span>splash<span class="token punctuation">)</span>           <span class="token comment"># 加载数据</span>
+    <span class="token comment"># main_window.showFullScreen()          # 全拼显示</span>
+    app<span class="token punctuation">.</span>setStyleSheet<span class="token punctuation">(</span>qdarkstyle<span class="token punctuation">.</span>load_stylesheet_pyqt5<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    splash<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    main_window<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    sys<span class="token punctuation">.</span>exit<span class="token punctuation">(</span>app<span class="token punctuation">.</span>exec_<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li><li style="color: rgb(153, 153, 153);">4</li><li style="color: rgb(153, 153, 153);">5</li><li style="color: rgb(153, 153, 153);">6</li><li style="color: rgb(153, 153, 153);">7</li><li style="color: rgb(153, 153, 153);">8</li><li style="color: rgb(153, 153, 153);">9</li><li style="color: rgb(153, 153, 153);">10</li><li style="color: rgb(153, 153, 153);">11</li><li style="color: rgb(153, 153, 153);">12</li><li style="color: rgb(153, 153, 153);">13</li><li style="color: rgb(153, 153, 153);">14</li><li style="color: rgb(153, 153, 153);">15</li><li style="color: rgb(153, 153, 153);">16</li></ul></pre> 
+<p>效果：<br> <img src="https://img-blog.csdnimg.cn/20210125183335720.png" alt="在这里插入图片描述"></p> 
+<h2><a name="t7"></a><a id="43__306"></a>4.3 主界面：</h2> 
+<p>主界面首先使用Qt Designer进行布局设计：<br> <img src="https://img-blog.csdnimg.cn/20210125183722582.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDkzNjg4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p> 
+<p>完成后导出为 .ui 文件：</p> 
+<p><img src="https://img-blog.csdnimg.cn/20210125183741144.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDkzNjg4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br> 然后完成另外一些部件，如左侧行人信息栏、详细信息模块等：<br> <img src="https://img-blog.csdnimg.cn/20210125183955104.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDkzNjg4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p> 
+<p>然后使用 PyQt5 加载这些文件到代码中，例如：</p> 
+<pre data-index="5" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">from</span> PyQt5 <span class="token keyword">import</span> QtWidgets
+<span class="token keyword">from</span> PyQt5<span class="token punctuation">.</span>QtWidgets <span class="token keyword">import</span> QMainWindow
+<span class="token keyword">from</span> PyQt5<span class="token punctuation">.</span>uic <span class="token keyword">import</span> loadUi
+
+<span class="token keyword">class</span> <span class="token class-name">DetailLogWindow</span><span class="token punctuation">(</span>QMainWindow<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> data<span class="token punctuation">,</span> parent<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token builtin">super</span><span class="token punctuation">(</span>DetailLogWindow<span class="token punctuation">,</span> self<span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span>parent<span class="token punctuation">)</span>
+        loadUi<span class="token punctuation">(</span><span class="token string">"./data/UI/DetailLog.ui"</span><span class="token punctuation">,</span> self<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>data <span class="token operator">=</span> data
+        self<span class="token punctuation">.</span>face_image<span class="token punctuation">.</span>setScaledContents<span class="token punctuation">(</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+        <span class="token comment"># self.license_image.setScaledContents(True)</span>
+        self<span class="token punctuation">.</span>ticket_button<span class="token punctuation">.</span>clicked<span class="token punctuation">.</span>connect<span class="token punctuation">(</span>self<span class="token punctuation">.</span>ticket<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>initData<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">ticket</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>destroy<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">initData</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>cam_id<span class="token punctuation">.</span>setText<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'CARID'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>behavior<span class="token punctuation">.</span>setText<span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'CARCOLOR'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+        <span class="token keyword">if</span> self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'CARIMAGE'</span><span class="token punctuation">]</span> <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>face_image<span class="token punctuation">.</span>setPixmap<span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'CARIMAGE'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        <span class="token keyword">if</span> self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'LICENSEIMAGE'</span><span class="token punctuation">]</span> <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>license_image<span class="token punctuation">.</span>setPixmap<span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'LICENSEIMAGE'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+        self<span class="token punctuation">.</span>preson_id<span class="token punctuation">.</span>setText<span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'LICENSENUMBER'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>face_name<span class="token punctuation">.</span>setText<span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'LOCATION'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>rule<span class="token punctuation">.</span>setText<span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'RULENAME'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+        self<span class="token punctuation">.</span>close_button<span class="token punctuation">.</span>clicked<span class="token punctuation">.</span>connect<span class="token punctuation">(</span>self<span class="token punctuation">.</span>close<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>delete_button<span class="token punctuation">.</span>clicked<span class="token punctuation">.</span>connect<span class="token punctuation">(</span>self<span class="token punctuation">.</span>deleteRecord<span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">close</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>destroy<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">deleteRecord</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        qm <span class="token operator">=</span> QtWidgets<span class="token punctuation">.</span>QMessageBox
+        prompt <span class="token operator">=</span> qm<span class="token punctuation">.</span>question<span class="token punctuation">(</span>self<span class="token punctuation">,</span> <span class="token string">''</span><span class="token punctuation">,</span> <span class="token string">"确定要删除吗?"</span><span class="token punctuation">,</span> qm<span class="token punctuation">.</span>Yes <span class="token operator">|</span> qm<span class="token punctuation">.</span>No<span class="token punctuation">)</span>
+        <span class="token keyword">if</span> prompt <span class="token operator">==</span> qm<span class="token punctuation">.</span>Yes<span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>destroy<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">else</span><span class="token punctuation">:</span>
+            <span class="token keyword">pass</span>
+
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li><li style="color: rgb(153, 153, 153);">4</li><li style="color: rgb(153, 153, 153);">5</li><li style="color: rgb(153, 153, 153);">6</li><li style="color: rgb(153, 153, 153);">7</li><li style="color: rgb(153, 153, 153);">8</li><li style="color: rgb(153, 153, 153);">9</li><li style="color: rgb(153, 153, 153);">10</li><li style="color: rgb(153, 153, 153);">11</li><li style="color: rgb(153, 153, 153);">12</li><li style="color: rgb(153, 153, 153);">13</li><li style="color: rgb(153, 153, 153);">14</li><li style="color: rgb(153, 153, 153);">15</li><li style="color: rgb(153, 153, 153);">16</li><li style="color: rgb(153, 153, 153);">17</li><li style="color: rgb(153, 153, 153);">18</li><li style="color: rgb(153, 153, 153);">19</li><li style="color: rgb(153, 153, 153);">20</li><li style="color: rgb(153, 153, 153);">21</li><li style="color: rgb(153, 153, 153);">22</li><li style="color: rgb(153, 153, 153);">23</li><li style="color: rgb(153, 153, 153);">24</li><li style="color: rgb(153, 153, 153);">25</li><li style="color: rgb(153, 153, 153);">26</li><li style="color: rgb(153, 153, 153);">27</li><li style="color: rgb(153, 153, 153);">28</li><li style="color: rgb(153, 153, 153);">29</li><li style="color: rgb(153, 153, 153);">30</li><li style="color: rgb(153, 153, 153);">31</li><li style="color: rgb(153, 153, 153);">32</li><li style="color: rgb(153, 153, 153);">33</li><li style="color: rgb(153, 153, 153);">34</li><li style="color: rgb(153, 153, 153);">35</li><li style="color: rgb(153, 153, 153);">36</li><li style="color: rgb(153, 153, 153);">37</li><li style="color: rgb(153, 153, 153);">38</li><li style="color: rgb(153, 153, 153);">39</li><li style="color: rgb(153, 153, 153);">40</li><li style="color: rgb(153, 153, 153);">41</li><li style="color: rgb(153, 153, 153);">42</li><li style="color: rgb(153, 153, 153);">43</li><li style="color: rgb(153, 153, 153);">44</li></ul></pre> 
+<p>即使用：</p> 
+<pre data-index="6" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;">loadUi<span class="token punctuation">(</span><span class="token string">".ui"</span><span class="token punctuation">,</span> self<span class="token punctuation">)</span>
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li></ul></pre> 
+<h2><a name="t8"></a><a id="44__371"></a>4.4 美化界面：</h2> 
+<p>现在界面是这样的：<br> <img src="https://img-blog.csdnimg.cn/20210125184827341.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDkzNjg4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br> 我们可以用一些CSS语句来装饰部件，当然也可以用别人设计好的。</p> 
+<p>这里使用qdarkstyle来美化界面：</p> 
+<pre data-index="7" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;">app<span class="token punctuation">.</span>setStyleSheet<span class="token punctuation">(</span>qdarkstyle<span class="token punctuation">.</span>load_stylesheet_pyqt5<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li></ul></pre> 
+<p>美化后的效果：</p> 
+<p><img src="https://img-blog.csdnimg.cn/20210125184958160.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDkzNjg4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p> 
+<h1><a name="t9"></a><a id="5_UI_386"></a>5. UI功能开发：</h1> 
+<h2><a name="t10"></a><a id="51__387"></a>5.1 绑定槽函数：</h2> 
+<p>信号和槽是PyQt编程对象之间进行通信的机制。每个继承自QWideget的控件都支持信号与槽机制。信号发射时（发送请求），连接的槽函数就会自动执行（针对请求进行处理）。</p> 
+<p>以下为绑定文件选择按钮的槽函数的示例：</p> 
+<ul><li>点击事件绑定：</li></ul> 
+<pre data-index="8" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;">self<span class="token punctuation">.</span>file_btn<span class="token punctuation">.</span>clicked<span class="token punctuation">.</span>connect<span class="token punctuation">(</span>
+            <span class="token keyword">lambda</span><span class="token punctuation">:</span> self<span class="token punctuation">.</span>getFile<span class="token punctuation">(</span>self<span class="token punctuation">.</span>file_edit<span class="token punctuation">)</span><span class="token punctuation">)</span>  <span class="token comment"># 文件选择槽函数绑定</span>
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li></ul></pre> 
+<ul><li>文件选择函数：</li></ul> 
+<pre data-index="9" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">def</span> <span class="token function">getFile</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> lineEdit<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        file_path <span class="token operator">=</span> QFileDialog<span class="token punctuation">.</span>getOpenFileName<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+        lineEdit<span class="token punctuation">.</span>setText<span class="token punctuation">(</span>file_path<span class="token punctuation">)</span>  <span class="token comment"># 获取文件路径</span>
+        self<span class="token punctuation">.</span>updateCamInfo<span class="token punctuation">(</span>file_path<span class="token punctuation">)</span>
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li><li style="color: rgb(153, 153, 153);">4</li></ul></pre> 
+<p>这样的话点击 file_btn 按钮就会发出信号，从而运行绑定的函数：</p> 
+<p><img src="https://img-blog.csdnimg.cn/20210125185014457.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDkzNjg4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p> 
+<h2><a name="t11"></a><a id="52_UI_411"></a>5.2 在UI中显示视频：</h2> 
+<p>这里主要是将图像逐帧放置到 QLabel 部件上。</p> 
+<p>首先我们需要将opencv的图像转为QImage：</p> 
+<pre data-index="10" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">def</span> <span class="token function">toQImage</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> img<span class="token punctuation">,</span> height<span class="token operator">=</span><span class="token number">800</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">if</span> <span class="token keyword">not</span> height <span class="token keyword">is</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            img <span class="token operator">=</span> imutils<span class="token punctuation">.</span>resize<span class="token punctuation">(</span>img<span class="token punctuation">,</span> height<span class="token operator">=</span>height<span class="token punctuation">)</span>
+        qformat <span class="token operator">=</span> QImage<span class="token punctuation">.</span>Format_Indexed8
+        <span class="token keyword">if</span> <span class="token builtin">len</span><span class="token punctuation">(</span>img<span class="token punctuation">.</span>shape<span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">3</span><span class="token punctuation">:</span>
+            <span class="token keyword">if</span> img<span class="token punctuation">.</span>shape<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token number">4</span><span class="token punctuation">:</span>
+                qformat <span class="token operator">=</span> QImage<span class="token punctuation">.</span>Format_RGBA8888
+            <span class="token keyword">else</span><span class="token punctuation">:</span>
+                qformat <span class="token operator">=</span> QImage<span class="token punctuation">.</span>Format_RGB888
+        outImg <span class="token operator">=</span> QImage<span class="token punctuation">(</span>
+            img<span class="token punctuation">.</span>tobytes<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> img<span class="token punctuation">.</span>shape<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> img<span class="token punctuation">.</span>shape<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> img<span class="token punctuation">.</span>strides<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> qformat<span class="token punctuation">)</span>
+        outImg <span class="token operator">=</span> outImg<span class="token punctuation">.</span>rgbSwapped<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span> outImg
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li><li style="color: rgb(153, 153, 153);">4</li><li style="color: rgb(153, 153, 153);">5</li><li style="color: rgb(153, 153, 153);">6</li><li style="color: rgb(153, 153, 153);">7</li><li style="color: rgb(153, 153, 153);">8</li><li style="color: rgb(153, 153, 153);">9</li><li style="color: rgb(153, 153, 153);">10</li><li style="color: rgb(153, 153, 153);">11</li><li style="color: rgb(153, 153, 153);">12</li><li style="color: rgb(153, 153, 153);">13</li></ul></pre> 
+<p>定义刷新时执行的函数：</p> 
+<pre data-index="11" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">def</span> <span class="token function">update_image</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> pt<span class="token operator">=</span><span class="token string">'face.jpg'</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        _<span class="token punctuation">,</span> frame <span class="token operator">=</span> self<span class="token punctuation">.</span>vs<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">if</span> frame <span class="token keyword">is</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            <span class="token keyword">return</span>
+        frame <span class="token operator">=</span> imutils<span class="token punctuation">.</span>resize<span class="token punctuation">(</span>frame<span class="token punctuation">,</span> height<span class="token operator">=</span><span class="token number">800</span><span class="token punctuation">)</span>
+        isChecked <span class="token operator">=</span> <span class="token punctuation">{<!-- --></span>
+            <span class="token string">'region'</span><span class="token punctuation">:</span> self<span class="token punctuation">.</span>region_checkbtn<span class="token punctuation">.</span>isChecked<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            <span class="token string">'wall'</span><span class="token punctuation">:</span> self<span class="token punctuation">.</span>wall_checkbtn<span class="token punctuation">.</span>isChecked<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+        packet <span class="token operator">=</span> self<span class="token punctuation">.</span>processor<span class="token punctuation">.</span>getProcessedImage<span class="token punctuation">(</span>frame<span class="token punctuation">,</span> isChecked<span class="token punctuation">,</span> region_bbox2draw<span class="token operator">=</span>self<span class="token punctuation">.</span>region_bbox2draw<span class="token punctuation">)</span>
+
+        qimg0 <span class="token operator">=</span> self<span class="token punctuation">.</span>toQImage<span class="token punctuation">(</span>packet<span class="token punctuation">[</span><span class="token string">'frame'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> height<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>live_preview<span class="token punctuation">.</span>setPixmap<span class="token punctuation">(</span>QPixmap<span class="token punctuation">.</span>fromImage<span class="token punctuation">(</span>qimg0<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li><li style="color: rgb(153, 153, 153);">4</li><li style="color: rgb(153, 153, 153);">5</li><li style="color: rgb(153, 153, 153);">6</li><li style="color: rgb(153, 153, 153);">7</li><li style="color: rgb(153, 153, 153);">8</li><li style="color: rgb(153, 153, 153);">9</li><li style="color: rgb(153, 153, 153);">10</li><li style="color: rgb(153, 153, 153);">11</li><li style="color: rgb(153, 153, 153);">12</li><li style="color: rgb(153, 153, 153);">13</li></ul></pre> 
+<p>然后绑定计时器，规定每 50ms 刷新一次：</p> 
+<pre data-index="12" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;">self<span class="token punctuation">.</span>timer <span class="token operator">=</span> QTimer<span class="token punctuation">(</span>self<span class="token punctuation">)</span>
+self<span class="token punctuation">.</span>timer<span class="token punctuation">.</span>timeout<span class="token punctuation">.</span>connect<span class="token punctuation">(</span>self<span class="token punctuation">.</span>update_image<span class="token punctuation">)</span>
+self<span class="token punctuation">.</span>timer<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token number">50</span><span class="token punctuation">)</span>
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li></ul></pre> 
+<h2><a name="t12"></a><a id="53__459"></a>5.3 相应鼠标绘制区域：</h2> 
+<p>这里使用PyQt5预置的响应函数：</p> 
+<pre data-index="13" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">def</span> <span class="token function">mouseReleaseEvent</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> event<span class="token punctuation">)</span><span class="token punctuation">:</span>  <span class="token comment"># 鼠标键释放时调用</span>
+        <span class="token comment"># 参数1：鼠标的作用对象；参数2：鼠标事件对象，用来保存鼠标数据</span>
+        self<span class="token punctuation">.</span>unsetCursor<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        n <span class="token operator">=</span> event<span class="token punctuation">.</span>button<span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment"># 用来判断是哪个鼠标健触发了事件【返回值：0  1  2  4】</span>
+        <span class="token keyword">if</span> n <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">:</span>
+            <span class="token keyword">if</span> self<span class="token punctuation">.</span>region_checkbtn<span class="token punctuation">.</span>isChecked<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">or</span> self<span class="token punctuation">.</span>wall_checkbtn<span class="token punctuation">.</span>isChecked<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+                x <span class="token operator">=</span> event<span class="token punctuation">.</span>x<span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment"># 返回鼠标相对于窗口的x轴坐标</span>
+                y <span class="token operator">=</span> event<span class="token punctuation">.</span>y<span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment"># 返回鼠标相对于窗口的y轴坐标</span>
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li><li style="color: rgb(153, 153, 153);">4</li><li style="color: rgb(153, 153, 153);">5</li><li style="color: rgb(153, 153, 153);">6</li><li style="color: rgb(153, 153, 153);">7</li><li style="color: rgb(153, 153, 153);">8</li></ul></pre> 
+<p>这样就可以获取到鼠标点击完释放时的位置，从而用来绘制危险区：<br> <img src="https://img-blog.csdnimg.cn/20210125185915967.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDkzNjg4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p> 
+<h2><a name="t13"></a><a id="54__475"></a>5.4 其他细节：</h2> 
+<ul><li>添加menu：</li></ul> 
+<pre data-index="14" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">def</span> <span class="token function">add_setting_menu</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> settingsMenu<span class="token punctuation">)</span><span class="token punctuation">:</span>
+
+        speed_menu <span class="token operator">=</span> QMenu<span class="token punctuation">(</span><span class="token string">"更改模型"</span><span class="token punctuation">,</span> self<span class="token punctuation">)</span>
+        settingsMenu<span class="token punctuation">.</span>addMenu<span class="token punctuation">(</span>speed_menu<span class="token punctuation">)</span>
+
+        act <span class="token operator">=</span> QAction<span class="token punctuation">(</span><span class="token string">'YOLOv3+DarkNet53'</span><span class="token punctuation">,</span> self<span class="token punctuation">)</span>
+        act<span class="token punctuation">.</span>setStatusTip<span class="token punctuation">(</span><span class="token string">'YOLOv3+DarkNet53'</span><span class="token punctuation">)</span>
+        speed_menu<span class="token punctuation">.</span>addAction<span class="token punctuation">(</span>act<span class="token punctuation">)</span>
+
+        act <span class="token operator">=</span> QAction<span class="token punctuation">(</span><span class="token string">'YOLOv3+MobileNetV3'</span><span class="token punctuation">,</span> self<span class="token punctuation">)</span>
+        act<span class="token punctuation">.</span>setStatusTip<span class="token punctuation">(</span><span class="token string">'YOLOv3+MobileNetV3'</span><span class="token punctuation">)</span>
+        speed_menu<span class="token punctuation">.</span>addAction<span class="token punctuation">(</span>act<span class="token punctuation">)</span>
+
+        direct_menu <span class="token operator">=</span> QMenu<span class="token punctuation">(</span><span class="token string">"更改阈值"</span><span class="token punctuation">,</span> self<span class="token punctuation">)</span>
+        settingsMenu<span class="token punctuation">.</span>addMenu<span class="token punctuation">(</span>direct_menu<span class="token punctuation">)</span>
+
+        act <span class="token operator">=</span> QAction<span class="token punctuation">(</span><span class="token string">'阈值+0.05'</span><span class="token punctuation">,</span> self<span class="token punctuation">)</span>
+        act<span class="token punctuation">.</span>setStatusTip<span class="token punctuation">(</span><span class="token string">'阈值+0.05'</span><span class="token punctuation">)</span>
+        direct_menu<span class="token punctuation">.</span>addAction<span class="token punctuation">(</span>act<span class="token punctuation">)</span>
+
+        act <span class="token operator">=</span> QAction<span class="token punctuation">(</span><span class="token string">'阈值-0.05'</span><span class="token punctuation">,</span> self<span class="token punctuation">)</span>
+        act<span class="token punctuation">.</span>setStatusTip<span class="token punctuation">(</span><span class="token string">'阈值-0.05'</span><span class="token punctuation">)</span>
+        direct_menu<span class="token punctuation">.</span>addAction<span class="token punctuation">(</span>act<span class="token punctuation">)</span>
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li><li style="color: rgb(153, 153, 153);">4</li><li style="color: rgb(153, 153, 153);">5</li><li style="color: rgb(153, 153, 153);">6</li><li style="color: rgb(153, 153, 153);">7</li><li style="color: rgb(153, 153, 153);">8</li><li style="color: rgb(153, 153, 153);">9</li><li style="color: rgb(153, 153, 153);">10</li><li style="color: rgb(153, 153, 153);">11</li><li style="color: rgb(153, 153, 153);">12</li><li style="color: rgb(153, 153, 153);">13</li><li style="color: rgb(153, 153, 153);">14</li><li style="color: rgb(153, 153, 153);">15</li><li style="color: rgb(153, 153, 153);">16</li><li style="color: rgb(153, 153, 153);">17</li><li style="color: rgb(153, 153, 153);">18</li><li style="color: rgb(153, 153, 153);">19</li><li style="color: rgb(153, 153, 153);">20</li><li style="color: rgb(153, 153, 153);">21</li><li style="color: rgb(153, 153, 153);">22</li><li style="color: rgb(153, 153, 153);">23</li></ul></pre> 
+<p><img src="https://img-blog.csdnimg.cn/20210125192146504.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDkzNjg4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br> 绑定细节框：</p> 
+<pre data-index="15" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;">self<span class="token punctuation">.</span>details_button<span class="token punctuation">.</span>clicked<span class="token punctuation">.</span>connect<span class="token punctuation">(</span>self<span class="token punctuation">.</span>showDetails<span class="token punctuation">)</span>
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li></ul></pre> 
+<pre data-index="16" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">def</span> <span class="token function">showDetails</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        window <span class="token operator">=</span> DetailLogWindow<span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">,</span> self<span class="token punctuation">)</span>
+        window<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li></ul></pre> 
+<pre data-index="17" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">from</span> PyQt5 <span class="token keyword">import</span> QtWidgets
+<span class="token keyword">from</span> PyQt5<span class="token punctuation">.</span>QtWidgets <span class="token keyword">import</span> QMainWindow
+<span class="token keyword">from</span> PyQt5<span class="token punctuation">.</span>uic <span class="token keyword">import</span> loadUi
+
+<span class="token keyword">class</span> <span class="token class-name">DetailLogWindow</span><span class="token punctuation">(</span>QMainWindow<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> data<span class="token punctuation">,</span> parent<span class="token operator">=</span><span class="token boolean">None</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token builtin">super</span><span class="token punctuation">(</span>DetailLogWindow<span class="token punctuation">,</span> self<span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span>parent<span class="token punctuation">)</span>
+        loadUi<span class="token punctuation">(</span><span class="token string">"./data/UI/DetailLog.ui"</span><span class="token punctuation">,</span> self<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>data <span class="token operator">=</span> data
+        self<span class="token punctuation">.</span>face_image<span class="token punctuation">.</span>setScaledContents<span class="token punctuation">(</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+        <span class="token comment"># self.license_image.setScaledContents(True)</span>
+        self<span class="token punctuation">.</span>ticket_button<span class="token punctuation">.</span>clicked<span class="token punctuation">.</span>connect<span class="token punctuation">(</span>self<span class="token punctuation">.</span>ticket<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>initData<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">ticket</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>destroy<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">initData</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>cam_id<span class="token punctuation">.</span>setText<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'CARID'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>behavior<span class="token punctuation">.</span>setText<span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'CARCOLOR'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+        <span class="token keyword">if</span> self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'CARIMAGE'</span><span class="token punctuation">]</span> <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>face_image<span class="token punctuation">.</span>setPixmap<span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'CARIMAGE'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        <span class="token keyword">if</span> self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'LICENSEIMAGE'</span><span class="token punctuation">]</span> <span class="token keyword">is</span> <span class="token keyword">not</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>license_image<span class="token punctuation">.</span>setPixmap<span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'LICENSEIMAGE'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+        self<span class="token punctuation">.</span>preson_id<span class="token punctuation">.</span>setText<span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'LICENSENUMBER'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>face_name<span class="token punctuation">.</span>setText<span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'LOCATION'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>rule<span class="token punctuation">.</span>setText<span class="token punctuation">(</span>self<span class="token punctuation">.</span>data<span class="token punctuation">[</span><span class="token string">'RULENAME'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+        self<span class="token punctuation">.</span>close_button<span class="token punctuation">.</span>clicked<span class="token punctuation">.</span>connect<span class="token punctuation">(</span>self<span class="token punctuation">.</span>close<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>delete_button<span class="token punctuation">.</span>clicked<span class="token punctuation">.</span>connect<span class="token punctuation">(</span>self<span class="token punctuation">.</span>deleteRecord<span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">close</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>destroy<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">def</span> <span class="token function">deleteRecord</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        qm <span class="token operator">=</span> QtWidgets<span class="token punctuation">.</span>QMessageBox
+        prompt <span class="token operator">=</span> qm<span class="token punctuation">.</span>question<span class="token punctuation">(</span>self<span class="token punctuation">,</span> <span class="token string">''</span><span class="token punctuation">,</span> <span class="token string">"确定要删除吗?"</span><span class="token punctuation">,</span> qm<span class="token punctuation">.</span>Yes <span class="token operator">|</span> qm<span class="token punctuation">.</span>No<span class="token punctuation">)</span>
+        <span class="token keyword">if</span> prompt <span class="token operator">==</span> qm<span class="token punctuation">.</span>Yes<span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>destroy<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">else</span><span class="token punctuation">:</span>
+            <span class="token keyword">pass</span>
+
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li><li style="color: rgb(153, 153, 153);">4</li><li style="color: rgb(153, 153, 153);">5</li><li style="color: rgb(153, 153, 153);">6</li><li style="color: rgb(153, 153, 153);">7</li><li style="color: rgb(153, 153, 153);">8</li><li style="color: rgb(153, 153, 153);">9</li><li style="color: rgb(153, 153, 153);">10</li><li style="color: rgb(153, 153, 153);">11</li><li style="color: rgb(153, 153, 153);">12</li><li style="color: rgb(153, 153, 153);">13</li><li style="color: rgb(153, 153, 153);">14</li><li style="color: rgb(153, 153, 153);">15</li><li style="color: rgb(153, 153, 153);">16</li><li style="color: rgb(153, 153, 153);">17</li><li style="color: rgb(153, 153, 153);">18</li><li style="color: rgb(153, 153, 153);">19</li><li style="color: rgb(153, 153, 153);">20</li><li style="color: rgb(153, 153, 153);">21</li><li style="color: rgb(153, 153, 153);">22</li><li style="color: rgb(153, 153, 153);">23</li><li style="color: rgb(153, 153, 153);">24</li><li style="color: rgb(153, 153, 153);">25</li><li style="color: rgb(153, 153, 153);">26</li><li style="color: rgb(153, 153, 153);">27</li><li style="color: rgb(153, 153, 153);">28</li><li style="color: rgb(153, 153, 153);">29</li><li style="color: rgb(153, 153, 153);">30</li><li style="color: rgb(153, 153, 153);">31</li><li style="color: rgb(153, 153, 153);">32</li><li style="color: rgb(153, 153, 153);">33</li><li style="color: rgb(153, 153, 153);">34</li><li style="color: rgb(153, 153, 153);">35</li><li style="color: rgb(153, 153, 153);">36</li><li style="color: rgb(153, 153, 153);">37</li><li style="color: rgb(153, 153, 153);">38</li><li style="color: rgb(153, 153, 153);">39</li><li style="color: rgb(153, 153, 153);">40</li><li style="color: rgb(153, 153, 153);">41</li><li style="color: rgb(153, 153, 153);">42</li><li style="color: rgb(153, 153, 153);">43</li><li style="color: rgb(153, 153, 153);">44</li></ul></pre> 
+<h1><a name="t14"></a><a id="6__563"></a>6. 部署方案：</h1> 
+<h2><a name="t15"></a><a id="61__564"></a>6.1 端侧视频推流：</h2> 
+<p>可以放在端侧设备上：</p> 
+<pre data-index="18" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">import</span> cv2                                                       
+<span class="token keyword">import</span> subprocess <span class="token keyword">as</span> sp                                          
+<span class="token keyword">import</span> subprocess <span class="token keyword">as</span> sp                                          
+                                                                 
+rtmpUrl <span class="token operator">=</span> <span class="token string">"接收视频的服务器"</span>                
+camera_path <span class="token operator">=</span> <span class="token number">0</span>                                       
+                                                                 
+cap <span class="token operator">=</span> cv2<span class="token punctuation">.</span>VideoCapture<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span>                              
+                                                                 
+<span class="token comment"># Get video information                                          </span>
+fps <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>cap<span class="token punctuation">.</span>get<span class="token punctuation">(</span>cv2<span class="token punctuation">.</span>CAP_PROP_FPS<span class="token punctuation">)</span><span class="token punctuation">)</span>                             
+width <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>cap<span class="token punctuation">.</span>get<span class="token punctuation">(</span>cv2<span class="token punctuation">.</span>CAP_PROP_FRAME_WIDTH<span class="token punctuation">)</span><span class="token punctuation">)</span>                   
+height <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">(</span>cap<span class="token punctuation">.</span>get<span class="token punctuation">(</span>cv2<span class="token punctuation">.</span>CAP_PROP_FRAME_HEIGHT<span class="token punctuation">)</span><span class="token punctuation">)</span>                 
+<span class="token comment"># ffmpeg command                                                 </span>
+command <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token string">'ffmpeg'</span><span class="token punctuation">,</span>                                             
+           <span class="token string">'-y'</span><span class="token punctuation">,</span>                                                 
+           <span class="token string">'-f'</span><span class="token punctuation">,</span> <span class="token string">'rawvideo'</span><span class="token punctuation">,</span>                                     
+           <span class="token string">'-vcodec'</span><span class="token punctuation">,</span> <span class="token string">'rawvideo'</span><span class="token punctuation">,</span>                                
+           <span class="token string">'-pix_fmt'</span><span class="token punctuation">,</span> <span class="token string">'bgr24'</span><span class="token punctuation">,</span>                                  
+           <span class="token string">'-s'</span><span class="token punctuation">,</span> <span class="token string">"{}x{}"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>width<span class="token punctuation">,</span> height<span class="token punctuation">)</span><span class="token punctuation">,</span>                  
+           <span class="token string">'-r'</span><span class="token punctuation">,</span> <span class="token builtin">str</span><span class="token punctuation">(</span>fps<span class="token punctuation">)</span><span class="token punctuation">,</span>                                       
+           <span class="token string">'-i'</span><span class="token punctuation">,</span> <span class="token string">'-'</span><span class="token punctuation">,</span>                                            
+           <span class="token string">'-c:v'</span><span class="token punctuation">,</span> <span class="token string">'libx264'</span><span class="token punctuation">,</span>                                    
+           <span class="token string">'-pix_fmt'</span><span class="token punctuation">,</span> <span class="token string">'yuv420p'</span><span class="token punctuation">,</span>                                
+           <span class="token string">'-preset'</span><span class="token punctuation">,</span> <span class="token string">'ultrafast'</span><span class="token punctuation">,</span>                               
+           <span class="token string">'-f'</span><span class="token punctuation">,</span> <span class="token string">'flv'</span><span class="token punctuation">,</span>                                          
+           rtmpUrl<span class="token punctuation">]</span>                                              
+<span class="token comment"># 管道配置                                                           </span>
+p <span class="token operator">=</span> sp<span class="token punctuation">.</span>Popen<span class="token punctuation">(</span>command<span class="token punctuation">,</span> stdin<span class="token operator">=</span>sp<span class="token punctuation">.</span>PIPE<span class="token punctuation">)</span>                             
+<span class="token comment"># read webcamera                                                 </span>
+<span class="token keyword">while</span> <span class="token punctuation">(</span>cap<span class="token punctuation">.</span>isOpened<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">:</span>                                          
+    ret<span class="token punctuation">,</span> frame <span class="token operator">=</span> cap<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span>                                      
+    <span class="token comment"># print("running......")                                     </span>
+    <span class="token keyword">if</span> <span class="token keyword">not</span> ret<span class="token punctuation">:</span>                                                  
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Opening camera is failed"</span><span class="token punctuation">)</span>                        
+        <span class="token keyword">break</span>                                                    
+    p<span class="token punctuation">.</span>stdin<span class="token punctuation">.</span>write<span class="token punctuation">(</span>frame<span class="token punctuation">.</span>tostring<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>                              
+                                                                 
+                                                                 
+return_value<span class="token punctuation">,</span> frame <span class="token operator">=</span> cap<span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span>                                 
+                                                                 
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li><li style="color: rgb(153, 153, 153);">4</li><li style="color: rgb(153, 153, 153);">5</li><li style="color: rgb(153, 153, 153);">6</li><li style="color: rgb(153, 153, 153);">7</li><li style="color: rgb(153, 153, 153);">8</li><li style="color: rgb(153, 153, 153);">9</li><li style="color: rgb(153, 153, 153);">10</li><li style="color: rgb(153, 153, 153);">11</li><li style="color: rgb(153, 153, 153);">12</li><li style="color: rgb(153, 153, 153);">13</li><li style="color: rgb(153, 153, 153);">14</li><li style="color: rgb(153, 153, 153);">15</li><li style="color: rgb(153, 153, 153);">16</li><li style="color: rgb(153, 153, 153);">17</li><li style="color: rgb(153, 153, 153);">18</li><li style="color: rgb(153, 153, 153);">19</li><li style="color: rgb(153, 153, 153);">20</li><li style="color: rgb(153, 153, 153);">21</li><li style="color: rgb(153, 153, 153);">22</li><li style="color: rgb(153, 153, 153);">23</li><li style="color: rgb(153, 153, 153);">24</li><li style="color: rgb(153, 153, 153);">25</li><li style="color: rgb(153, 153, 153);">26</li><li style="color: rgb(153, 153, 153);">27</li><li style="color: rgb(153, 153, 153);">28</li><li style="color: rgb(153, 153, 153);">29</li><li style="color: rgb(153, 153, 153);">30</li><li style="color: rgb(153, 153, 153);">31</li><li style="color: rgb(153, 153, 153);">32</li><li style="color: rgb(153, 153, 153);">33</li><li style="color: rgb(153, 153, 153);">34</li><li style="color: rgb(153, 153, 153);">35</li><li style="color: rgb(153, 153, 153);">36</li><li style="color: rgb(153, 153, 153);">37</li><li style="color: rgb(153, 153, 153);">38</li><li style="color: rgb(153, 153, 153);">39</li><li style="color: rgb(153, 153, 153);">40</li><li style="color: rgb(153, 153, 153);">41</li></ul></pre> 
+<h2><a name="t16"></a><a id="62_Flask_609"></a>6.2 <a href="https://so.csdn.net/so/search?q=Flask&amp;spm=1001.2101.3001.7020" target="_blank" class="hl hl-1" data-report-click="{&quot;spm&quot;:&quot;1001.2101.3001.7020&quot;,&quot;dest&quot;:&quot;https://so.csdn.net/so/search?q=Flask&amp;spm=1001.2101.3001.7020&quot;,&quot;extra&quot;:&quot;{\&quot;searchword\&quot;:\&quot;Flask\&quot;}&quot;}" data-tit="Flask" data-pretit="flask">Flask</a>部署：</h2> 
+<p>注意下面并非本项目代码，而是一个图像分类模型Flask部署的代码：</p> 
+<pre data-index="19" class="prettyprint"><code class="prism language-python has-numbering" onclick="mdcp.copyCode(event)" style="position: unset;"><span class="token keyword">import</span> datetime
+<span class="token keyword">import</span> logging <span class="token keyword">as</span> rel_log
+<span class="token keyword">import</span> os
+<span class="token keyword">import</span> shutil
+<span class="token keyword">from</span> datetime <span class="token keyword">import</span> timedelta
+<span class="token keyword">from</span> paddlex <span class="token keyword">import</span> deploy
+<span class="token keyword">from</span> flask <span class="token keyword">import</span> <span class="token operator">*</span>
+
+<span class="token keyword">import</span> core<span class="token punctuation">.</span>main
+
+UPLOAD_FOLDER <span class="token operator">=</span> <span class="token string">r'./uploads'</span>
+
+ALLOWED_EXTENSIONS <span class="token operator">=</span> <span class="token builtin">set</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">'png'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+app <span class="token operator">=</span> Flask<span class="token punctuation">(</span>__name__<span class="token punctuation">)</span>
+app<span class="token punctuation">.</span>secret_key <span class="token operator">=</span> <span class="token string">'secret!'</span>
+app<span class="token punctuation">.</span>config<span class="token punctuation">[</span><span class="token string">'UPLOAD_FOLDER'</span><span class="token punctuation">]</span> <span class="token operator">=</span> UPLOAD_FOLDER
+
+werkzeug_logger <span class="token operator">=</span> rel_log<span class="token punctuation">.</span>getLogger<span class="token punctuation">(</span><span class="token string">'werkzeug'</span><span class="token punctuation">)</span>
+werkzeug_logger<span class="token punctuation">.</span>setLevel<span class="token punctuation">(</span>rel_log<span class="token punctuation">.</span>ERROR<span class="token punctuation">)</span>
+
+<span class="token comment"># 解决缓存刷新问题</span>
+app<span class="token punctuation">.</span>config<span class="token punctuation">[</span><span class="token string">'SEND_FILE_MAX_AGE_DEFAULT'</span><span class="token punctuation">]</span> <span class="token operator">=</span> timedelta<span class="token punctuation">(</span>seconds<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span>
+
+
+<span class="token comment"># 添加header解决跨域</span>
+<span class="token decorator annotation punctuation">@app<span class="token punctuation">.</span>after_request</span>
+<span class="token keyword">def</span> <span class="token function">after_request</span><span class="token punctuation">(</span>response<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    response<span class="token punctuation">.</span>headers<span class="token punctuation">[</span><span class="token string">'Access-Control-Allow-Origin'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">'*'</span>
+    response<span class="token punctuation">.</span>headers<span class="token punctuation">[</span><span class="token string">'Access-Control-Allow-Credentials'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">'true'</span>
+    response<span class="token punctuation">.</span>headers<span class="token punctuation">[</span><span class="token string">'Access-Control-Allow-Methods'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">'POST'</span>
+    response<span class="token punctuation">.</span>headers<span class="token punctuation">[</span><span class="token string">'Access-Control-Allow-Headers'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">'Content-Type, X-Requested-With'</span>
+    <span class="token keyword">return</span> response
+
+
+<span class="token keyword">def</span> <span class="token function">allowed_file</span><span class="token punctuation">(</span>filename<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">return</span> <span class="token string">'.'</span> <span class="token keyword">in</span> filename <span class="token keyword">and</span> filename<span class="token punctuation">.</span>rsplit<span class="token punctuation">(</span><span class="token string">'.'</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token keyword">in</span> ALLOWED_EXTENSIONS
+
+
+<span class="token decorator annotation punctuation">@app<span class="token punctuation">.</span>route</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">hello_world</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">return</span> redirect<span class="token punctuation">(</span>url_for<span class="token punctuation">(</span><span class="token string">'static'</span><span class="token punctuation">,</span> filename<span class="token operator">=</span><span class="token string">'./index.html'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+
+<span class="token decorator annotation punctuation">@app<span class="token punctuation">.</span>route</span><span class="token punctuation">(</span><span class="token string">'/upload'</span><span class="token punctuation">,</span> methods<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'GET'</span><span class="token punctuation">,</span> <span class="token string">'POST'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">upload_file</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token builtin">file</span> <span class="token operator">=</span> request<span class="token punctuation">.</span>files<span class="token punctuation">[</span><span class="token string">'file'</span><span class="token punctuation">]</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>datetime<span class="token punctuation">.</span>datetime<span class="token punctuation">.</span>now<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token builtin">file</span><span class="token punctuation">.</span>filename<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> <span class="token builtin">file</span> <span class="token keyword">and</span> allowed_file<span class="token punctuation">(</span><span class="token builtin">file</span><span class="token punctuation">.</span>filename<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        src_path <span class="token operator">=</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>join<span class="token punctuation">(</span>app<span class="token punctuation">.</span>config<span class="token punctuation">[</span><span class="token string">'UPLOAD_FOLDER'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token builtin">file</span><span class="token punctuation">.</span>filename<span class="token punctuation">)</span>
+        <span class="token builtin">file</span><span class="token punctuation">.</span>save<span class="token punctuation">(</span>src_path<span class="token punctuation">)</span>
+        shutil<span class="token punctuation">.</span>copy<span class="token punctuation">(</span>src_path<span class="token punctuation">,</span> <span class="token string">'./tmp/ct'</span><span class="token punctuation">)</span>
+        image_path <span class="token operator">=</span> os<span class="token punctuation">.</span>path<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token string">'./tmp/ct'</span><span class="token punctuation">,</span> <span class="token builtin">file</span><span class="token punctuation">.</span>filename<span class="token punctuation">)</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span>src_path<span class="token punctuation">,</span> image_path<span class="token punctuation">)</span>
+        pid<span class="token punctuation">,</span> image_info <span class="token operator">=</span> core<span class="token punctuation">.</span>main<span class="token punctuation">.</span>c_main<span class="token punctuation">(</span>image_path<span class="token punctuation">,</span> current_app<span class="token punctuation">.</span>model<span class="token punctuation">)</span>
+        <span class="token keyword">return</span> jsonify<span class="token punctuation">(</span><span class="token punctuation">{<!-- --></span><span class="token string">'status'</span><span class="token punctuation">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+                        <span class="token string">'image_url'</span><span class="token punctuation">:</span> <span class="token string">'http://127.0.0.1:5003/tmp/ct/'</span> <span class="token operator">+</span> pid<span class="token punctuation">,</span>
+                        <span class="token string">'draw_url'</span><span class="token punctuation">:</span> <span class="token string">'http://127.0.0.1:5003/tmp/draw/'</span> <span class="token operator">+</span> pid<span class="token punctuation">,</span>
+                        <span class="token string">'image_info'</span><span class="token punctuation">:</span> image_info
+                        <span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> jsonify<span class="token punctuation">(</span><span class="token punctuation">{<!-- --></span><span class="token string">'status'</span><span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+
+<span class="token decorator annotation punctuation">@app<span class="token punctuation">.</span>route</span><span class="token punctuation">(</span><span class="token string">"/download"</span><span class="token punctuation">,</span> methods<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'GET'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">download_file</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># 需要知道2个参数, 第1个参数是本地目录的path, 第2个参数是文件名(带扩展名)</span>
+    <span class="token keyword">return</span> send_from_directory<span class="token punctuation">(</span><span class="token string">'data'</span><span class="token punctuation">,</span> <span class="token string">'testfile.zip'</span><span class="token punctuation">,</span> as_attachment<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+
+
+<span class="token comment"># show photo</span>
+<span class="token decorator annotation punctuation">@app<span class="token punctuation">.</span>route</span><span class="token punctuation">(</span><span class="token string">'/tmp/&lt;path:file&gt;'</span><span class="token punctuation">,</span> methods<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'GET'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">show_photo</span><span class="token punctuation">(</span><span class="token builtin">file</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">if</span> request<span class="token punctuation">.</span>method <span class="token operator">==</span> <span class="token string">'GET'</span><span class="token punctuation">:</span>
+        <span class="token keyword">if</span> <span class="token keyword">not</span> <span class="token builtin">file</span> <span class="token keyword">is</span> <span class="token boolean">None</span><span class="token punctuation">:</span>
+            image_data <span class="token operator">=</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f'tmp/</span><span class="token interpolation"><span class="token punctuation">{<!-- --></span><span class="token builtin">file</span><span class="token punctuation">}</span></span><span class="token string">'</span></span><span class="token punctuation">,</span> <span class="token string">"rb"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span>
+            response <span class="token operator">=</span> make_response<span class="token punctuation">(</span>image_data<span class="token punctuation">)</span>
+            response<span class="token punctuation">.</span>headers<span class="token punctuation">[</span><span class="token string">'Content-Type'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token string">'image/png'</span>
+            <span class="token keyword">return</span> response
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
+    <span class="token keyword">with</span> app<span class="token punctuation">.</span>app_context<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        current_app<span class="token punctuation">.</span>model <span class="token operator">=</span> deploy<span class="token punctuation">.</span>Predictor<span class="token punctuation">(</span>
+            <span class="token string">'./core/net/inference_model'</span><span class="token punctuation">,</span> use_gpu<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+    app<span class="token punctuation">.</span>run<span class="token punctuation">(</span>host<span class="token operator">=</span><span class="token string">'127.0.0.1'</span><span class="token punctuation">,</span> port<span class="token operator">=</span><span class="token number">5003</span><span class="token punctuation">,</span> debug<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+
+<div class="hljs-button {2}" data-title="复制"></div></code><ul class="pre-numbering" style=""><li style="color: rgb(153, 153, 153);">1</li><li style="color: rgb(153, 153, 153);">2</li><li style="color: rgb(153, 153, 153);">3</li><li style="color: rgb(153, 153, 153);">4</li><li style="color: rgb(153, 153, 153);">5</li><li style="color: rgb(153, 153, 153);">6</li><li style="color: rgb(153, 153, 153);">7</li><li style="color: rgb(153, 153, 153);">8</li><li style="color: rgb(153, 153, 153);">9</li><li style="color: rgb(153, 153, 153);">10</li><li style="color: rgb(153, 153, 153);">11</li><li style="color: rgb(153, 153, 153);">12</li><li style="color: rgb(153, 153, 153);">13</li><li style="color: rgb(153, 153, 153);">14</li><li style="color: rgb(153, 153, 153);">15</li><li style="color: rgb(153, 153, 153);">16</li><li style="color: rgb(153, 153, 153);">17</li><li style="color: rgb(153, 153, 153);">18</li><li style="color: rgb(153, 153, 153);">19</li><li style="color: rgb(153, 153, 153);">20</li><li style="color: rgb(153, 153, 153);">21</li><li style="color: rgb(153, 153, 153);">22</li><li style="color: rgb(153, 153, 153);">23</li><li style="color: rgb(153, 153, 153);">24</li><li style="color: rgb(153, 153, 153);">25</li><li style="color: rgb(153, 153, 153);">26</li><li style="color: rgb(153, 153, 153);">27</li><li style="color: rgb(153, 153, 153);">28</li><li style="color: rgb(153, 153, 153);">29</li><li style="color: rgb(153, 153, 153);">30</li><li style="color: rgb(153, 153, 153);">31</li><li style="color: rgb(153, 153, 153);">32</li><li style="color: rgb(153, 153, 153);">33</li><li style="color: rgb(153, 153, 153);">34</li><li style="color: rgb(153, 153, 153);">35</li><li style="color: rgb(153, 153, 153);">36</li><li style="color: rgb(153, 153, 153);">37</li><li style="color: rgb(153, 153, 153);">38</li><li style="color: rgb(153, 153, 153);">39</li><li style="color: rgb(153, 153, 153);">40</li><li style="color: rgb(153, 153, 153);">41</li><li style="color: rgb(153, 153, 153);">42</li><li style="color: rgb(153, 153, 153);">43</li><li style="color: rgb(153, 153, 153);">44</li><li style="color: rgb(153, 153, 153);">45</li><li style="color: rgb(153, 153, 153);">46</li><li style="color: rgb(153, 153, 153);">47</li><li style="color: rgb(153, 153, 153);">48</li><li style="color: rgb(153, 153, 153);">49</li><li style="color: rgb(153, 153, 153);">50</li><li style="color: rgb(153, 153, 153);">51</li><li style="color: rgb(153, 153, 153);">52</li><li style="color: rgb(153, 153, 153);">53</li><li style="color: rgb(153, 153, 153);">54</li><li style="color: rgb(153, 153, 153);">55</li><li style="color: rgb(153, 153, 153);">56</li><li style="color: rgb(153, 153, 153);">57</li><li style="color: rgb(153, 153, 153);">58</li><li style="color: rgb(153, 153, 153);">59</li><li style="color: rgb(153, 153, 153);">60</li><li style="color: rgb(153, 153, 153);">61</li><li style="color: rgb(153, 153, 153);">62</li><li style="color: rgb(153, 153, 153);">63</li><li style="color: rgb(153, 153, 153);">64</li><li style="color: rgb(153, 153, 153);">65</li><li style="color: rgb(153, 153, 153);">66</li><li style="color: rgb(153, 153, 153);">67</li><li style="color: rgb(153, 153, 153);">68</li><li style="color: rgb(153, 153, 153);">69</li><li style="color: rgb(153, 153, 153);">70</li><li style="color: rgb(153, 153, 153);">71</li><li style="color: rgb(153, 153, 153);">72</li><li style="color: rgb(153, 153, 153);">73</li><li style="color: rgb(153, 153, 153);">74</li><li style="color: rgb(153, 153, 153);">75</li><li style="color: rgb(153, 153, 153);">76</li><li style="color: rgb(153, 153, 153);">77</li><li style="color: rgb(153, 153, 153);">78</li><li style="color: rgb(153, 153, 153);">79</li><li style="color: rgb(153, 153, 153);">80</li><li style="color: rgb(153, 153, 153);">81</li><li style="color: rgb(153, 153, 153);">82</li><li style="color: rgb(153, 153, 153);">83</li><li style="color: rgb(153, 153, 153);">84</li><li style="color: rgb(153, 153, 153);">85</li></ul></pre> 
+<h1><a name="t17"></a><a id="7__699"></a>7. 联系作者：</h1> 
+<blockquote> 
+ <p>B站：<a href="https://space.bilibili.com/470550823">https://space.bilibili.com/470550823</a></p> 
+</blockquote> 
+<blockquote> 
+ <p>CSDN：<a href="https://blog.csdn.net/weixin_44936889">https://blog.csdn.net/weixin_44936889</a></p> 
+</blockquote> 
+<blockquote> 
+ <p>AI Studio：<a href="https://aistudio.baidu.com/aistudio/personalcenter/thirdview/67156">https://aistudio.baidu.com/aistudio/personalcenter/thirdview/67156</a></p> 
+</blockquote> 
+<blockquote> 
+ <p>Github：<a href="https://github.com/Sharpiless">https://github.com/Sharpiless</a></p> 
+</blockquote> 
+<p>遵循 GNU General Public License v3.0 协议，标明目标检测部分来源：https://github.com/ultralytics/yolov5/</p> 
+<h1><a name="t18"></a><a id="_709"></a>关注我的公众号：</h1> 
+<p>感兴趣的同学关注我的公众号——可达鸭的深度学习教程：<br> <img src="https://img-blog.csdnimg.cn/20210127153004430.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDkzNjg4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+                </div><div data-report-view="{&quot;mod&quot;:&quot;1585297308_001&quot;,&quot;spm&quot;:&quot;1001.2101.3001.6548&quot;,&quot;dest&quot;:&quot;https://blog.csdn.net/weixin_44936889/article/details/113129098&quot;,&quot;extend1&quot;:&quot;pc&quot;,&quot;ab&quot;:&quot;new&quot;}"><div></div></div>
+                <link href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/editerView/markdown_views-22a2fefd3b.css" rel="stylesheet">
+                <link href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/style-4566211012.css" rel="stylesheet">
+        </div>
+        <div id="treeSkill" data-report-view="{&quot;spm&quot;:&quot;1001.2101.3001.6866&quot;}" style="display: block;"><div class="skill-tree-box"><div class="skill-tree-head">文章知识点与官方知识档案匹配，可进一步学习相关知识</div><div class="skill-tree-body"><div class="skill-tree-item"><span class="skill-tree-href"><a data-report-click="{&quot;spm&quot;:&quot;1001.2101.3001.6866&quot;,&quot;dest&quot;:&quot;https://edu.csdn.net/skill/python/python-3-175&quot;}" href="https://edu.csdn.net/skill/python/python-3-175" target="_blank">Python入门技能树</a><i></i><a data-report-click="{&quot;spm&quot;:&quot;1001.2101.3001.6866&quot;,&quot;dest&quot;:&quot;https://edu.csdn.net/skill/python/python-3-175&quot;}" href="https://edu.csdn.net/skill/python/python-3-175" target="_blank">桌面应用开发</a><i></i><a data-report-click="{&quot;spm&quot;:&quot;1001.2101.3001.6866&quot;,&quot;dest&quot;:&quot;https://edu.csdn.net/skill/python/python-3-175&quot;}" href="https://edu.csdn.net/skill/python/python-3-175" target="_blank">PyQT</a></span><span class="skill-tree-con"><span class="skill-tree-count">201681</span> 人正在系统学习中</span></div></div></div></div>
+    </article>
+            </div> 
+            <div class="more-toolbox-new" id="toolBarBox"> 
+            <div class="left-toolbox"> 
+
+            <div class="toolbox-left">
+            <div class="profile-box"><a class="profile-href" target="_blank" href="https://blog.csdn.net/weixin_44936889"><img class="profile-img" src="https://profile.csdnimg.cn/9/2/4/3_weixin_44936889"><span class="profile-name">BIT可达鸭</span></a></div>
+            <div class="profile-attend">
+                    <a class="tool-attend tool-bt-button tool-unbt-attend" href="javascript:;">已关注</a>
+                <a class="tool-item-follow active-animation" style="display:none;">关注</a>
+            </div>
+        </div>
+            <div class="toolbox-middle">  
+           </div> 
+
+            <div class="toolbox-right">
+                <div class="tool-directory">
+                    <a class="bt-columnlist-show" data-id="11268335" data-free="false" data-subscribe="false" data-title="▶ 深度学习-计算机视觉" data-img="https://img-blog.csdnimg.cn/20210807143046503.jpg?x-oss-process=image/resize,m_fixed,h_224,w_224" data-url="https://blog.csdn.net/weixin_44936889/category_11268335.html" data-sum="155" data-people="949" data-price="29.90" data-oldprice="99.00" data-join="true" data-studyvip="true" data-studysubscribe="true" data-report-click="{&quot;spm&quot;:&quot;1001.2101.3001.6334&quot;,&quot;extend1&quot;:&quot;专栏目录&quot;}">专栏目录</a>
+                </div>
+        </div>
+
+               </div> 
+         </div>        
+         <a id="commentBox" name="commentBox"></a>
+
+            <div id="recommendNps" class="recommend-nps-box common-nps-box" style="display: block;">
+  <h3 class="aside-title">“相关推荐”对你有帮助么？</h3>
+  <div class="aside-content">
+      <ul class="newnps-list">
+          <li class="newnps-item" data-type="非常没帮助">
+              <div class="newnps-img-box">
+                  <img class="newnps-img active" src="https://csdnimg.cn/release/blogv2/dist/pc/img/npsFeel1.png" alt="">
+                  <img class="newnps-img default" src="https://csdnimg.cn/release/blogv2/dist/pc/img/npsFeelGrey1.png" alt="">
+              </div>
+              <div class="newnps-text">非常没帮助</div>
+          </li>
+          <li class="newnps-item" data-type="没帮助">
+              <div class="newnps-img-box">
+                  <img class="newnps-img active" src="https://csdnimg.cn/release/blogv2/dist/pc/img/npsFeel2.png" alt="">
+                  <img class="newnps-img default" src="https://csdnimg.cn/release/blogv2/dist/pc/img/npsFeelGrey2.png" alt="">
+              </div>
+              <div class="newnps-text">没帮助</div>
+          </li>
+          <li class="newnps-item" data-type="一般">
+              <div class="newnps-img-box">
+                  <img class="newnps-img active" src="https://csdnimg.cn/release/blogv2/dist/pc/img/npsFeel3.png" alt="">
+                  <img class="newnps-img default" src="https://csdnimg.cn/release/blogv2/dist/pc/img/npsFeelGrey3.png" alt="">
+              </div>
+              <div class="newnps-text">一般</div>
+          </li>
+          <li class="newnps-item" data-type="有帮助">
+              <div class="newnps-img-box">
+                  <img class="newnps-img active" src="https://csdnimg.cn/release/blogv2/dist/pc/img/npsFeel4.png" alt="">
+                  <img class="newnps-img default" src="https://csdnimg.cn/release/blogv2/dist/pc/img/npsFeelGrey4.png" alt="">
+              </div>
+              <div class="newnps-text">有帮助</div>
+          </li>
+          <li class="newnps-item" data-type="非常有帮助">
+              <div class="newnps-img-box">
+                  <img class="newnps-img active" src="https://csdnimg.cn/release/blogv2/dist/pc/img/npsFeel5.png" alt="">
+                  <img class="newnps-img default" src="https://csdnimg.cn/release/blogv2/dist/pc/img/npsFeelGrey5.png" alt="">
+              </div>
+              <div class="newnps-text">非常有帮助</div>
+          </li>
+      </ul>
+      <div class="newnps-form-box">
+      <div class="newnps-form">
+          <input type="text" placeholder="请输入建议或反馈后点击提交" class="newnps-input">
+          <span class="newnps-btn">提交</span>
+      </div>
+      </div>
+  </div>
+</div>
+              </main>     
+       </div>
+       <div class="recommend-right align-items-stretch clearfix" id="rightAside" data-type="recommend"> 
+        <aside class="recommend-right_aside"> 
+         <div id="recommend-right"> 
+          <div class="flex-column aside-box groupfile" id="groupfile">
+          <div class="groupfile-div"> 
+            <h3 class="aside-title">目录</h3> 
+            <div class="align-items-stretch group_item"> 
+             <div class="pos-box"> 
+              <div class="scroll-box"> 
+               <div class="toc-box"></div> 
+              </div> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+             </div> 
+        </aside> 
+       </div> 
+
+       <div class="recommend-right1  align-items-stretch clearfix" id="rightAsideConcision" data-type="recommend"> 
+        <aside class="recommend-right_aside"> 
+         <div id="recommend-right-concision"> 
+          <div class="flex-column aside-box groupfile" id="groupfileConcision"> 
+           <div class="groupfile-div1"> 
+            <h3 class="aside-title">目录</h3> 
+            <div class="align-items-stretch group_item"> 
+             <div class="pos-box"> 
+              <div class="scroll-box"> 
+               <div class="toc-box"></div> 
+              </div> 
+             </div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </aside> 
+       </div> 
+      </div> 
+
+
+
+
+
+
+         <link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.6.12/ckeditor/plugins/chart/chart.css">      
+      <link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.6.12/ckeditor/plugins/codesnippet/lib/highlight/styles/atom-one-light.css">                  
+     </body>
+    </html>
+
+
+            
